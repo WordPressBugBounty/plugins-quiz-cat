@@ -3,9 +3,9 @@ jQuery(document).ready(function($){
 	
 	var $deactivateButton = $('#the-list tr.active').filter( function() { return $(this).data('plugin') === 'quiz-cat/quizcat.php' } ).find('.deactivate a')
 		
-	$deactivateButton.click(function(e){
+	$deactivateButton.on( 'click', function(e){
 		e.preventDefault()
-		$deactivateButton.unbind('click')
+		$deactivateButton.off('click')
 		$('body').append(fca_qc.html)
 		fca_qc_uninstall_button_handlers( $deactivateButton.attr('href') )
 		
@@ -14,11 +14,11 @@ jQuery(document).ready(function($){
 
 function fca_qc_uninstall_button_handlers( url ) {
 	var $ = jQuery
-	$('#fca-qc-deactivate-skip').click(function(){
+	$('#fca-qc-deactivate-skip').on( 'click', function(){
 		$(this).prop( 'disabled', true )
 		window.location.href = url
 	})
-	$('#fca-qc-deactivate-send').click(function(){
+	$('#fca-qc-deactivate-send').on( 'click', function(){
 		$(this).prop( 'disabled', true )
 		$(this).html('...')
 		$('#fca-qc-deactivate-skip').hide()

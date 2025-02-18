@@ -1,14 +1,14 @@
 === Quiz Cat - WordPress Quiz Plugin ===
 Contributors: fatcatapps, davidhme, ryannovotny, quizcat
 Donate link: https://fatcatapps.com/
-Tags: quiz, quiz block, quizzes, create quiz, viral quiz, quiz plugin, buzzfeed quiz, trivia quiz, personality quiz, gutenberg
+Tags: quiz, quizzes, viral quiz, buzzfeed quiz, trivia quiz
 Author URI: https://fatcatapps.com/
 Plugin URI: https://fatcatapps.com/quizcat
 Requires at least: 4.0
-Tested up to: 6.6
+Tested up to: 6.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 3.0.7
+Stable tag: 3.0.8
 
 Quiz Cat Lets You Create Beautiful Viral BuzzFeed-style Quizzes That Drive Social Shares & User Engagement. Set It Up In 2 Minutes.
 
@@ -169,6 +169,12 @@ Our full privacy policy is available here: [https://fatcatapps.com/legal/privacy
 
 
 == Changelog ==
+
+= Quiz Cat 3.0.8 =
+* Fixed possible theme conflict where question modal was hidden
+* Changed quiz question checkbox alignment
+* Changed allowed HTML sanitization in wysiwyg/wysi editor to match wp_kses_post allowed html
+* Tested up to WordPress 6.7
 
 = Quiz Cat 3.0.7 =
 * Fix possible XSS vector reported.

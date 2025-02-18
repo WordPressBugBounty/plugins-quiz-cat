@@ -217,7 +217,7 @@ function fca_qc_upgrade_to_premium_menu_js() {
     ?>
     <script type="text/javascript">
     	jQuery(document).ready(function ($) {
-            $('a[href="edit.php?post_type=fca_qc_quiz&page=quiz-cat-upgrade"]').click( function () {
+            $('a[href="edit.php?post_type=fca_qc_quiz&page=quiz-cat-upgrade"]').on('click', function () {
         		$(this).attr('target', '_blank')
             })
         })

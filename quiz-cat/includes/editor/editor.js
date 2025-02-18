@@ -33,7 +33,7 @@ jQuery(document).ready(function($){
 	$('#fca_qc_questions_meta_box .postbox-header h2').addClass('fca-qc-color3')
 	$('#fca_qc_description_meta_box .postbox-header h2').addClass('fca-qc-color1')
 	
-	$('.qc_radio_input').click( function() {
+	$('.qc_radio_input').on( 'click', function() {
 		$(this).closest('.radio-toggle').children('label').removeClass('selected')
 		$(this).closest('label').addClass('selected')
 	})
@@ -65,7 +65,7 @@ jQuery(document).ready(function($){
 	$( '.postbox .inside textarea, .fca_qc_input_wide, .fca_qc_text_input' ).each( function( i, textarea ){ loadState += textarea.value } )
 	$( '.postbox .inside .onoffswitch-checkbox' ).each( function( i, checkbox ){ loadState += checkbox.checked } )
 
-	$( window ).bind( 'beforeunload', function( e ){
+	$( window ).on( 'beforeunload', function( e ){
 		var unloadState = ''
 		$( '.postbox .inside textarea, .fca_qc_input_wide, .fca_qc_text_input' ).each( function( i, textarea ){ unloadState += textarea.value } )
 		$( '.postbox .inside .onoffswitch-checkbox' ).each( function( i, checkbox ){ unloadState += checkbox.checked } )
@@ -78,7 +78,7 @@ jQuery(document).ready(function($){
 
 	//SUBMIT / SAVE HANDLER
 	$('#fca_qc_submit_button').on( 'click', function(event) {
-		$( window ).unbind( 'beforeunload' )
+		$( window ).off( 'beforeunload' )
 	
 		// Add target
 		var thisForm = $(this).closest('form')
@@ -90,7 +90,7 @@ jQuery(document).ready(function($){
 	})
 
 
-	$('#post').submit(function(event) {
+	$('#post').on( 'submit', function(event) {
 
 		// Submit questions
 		fca_qc_save_question_json()
@@ -114,6 +114,7 @@ jQuery(document).ready(function($){
 	
 	if( $('#fca_qc_quiz_type').val() === 'wq' ) {
 		$('#fca_qc_hints_toggle_tr').hide()
+		$('#fca_qc_answer_mode_tr').hide()
 	}
 	
 	 
@@ -140,7 +141,7 @@ jQuery(document).ready(function($){
 		// Submit results
 		fca_qc_save_result_json()
 
-		thisForm.submit()
+		thisForm.trigger( 'submit' )
 
 	})	
 	
@@ -459,8 +460,7 @@ function fca_qc_hide_metaboxes(){
 
 function fca_qc_add_answer_button_handlers() {
 	var $ = jQuery
-	$('.fca_qc_add_answer_btn').unbind( 'click' )
-
+	$('.fca_qc_add_answer_btn').off( 'click' )
 	$('.fca_qc_add_answer_btn').on( 'click', function() {
 		var newId = fca_qc_new_GUID()
 		var quizType = $('#fca_qc_quiz_type').val()
@@ -471,7 +471,7 @@ function fca_qc_add_answer_button_handlers() {
 				div_to_append = div_to_append.replace( /{{answer_id}}/g, newId )
 				div_to_append = div_to_append.replace( /{{answer_text}}/g, '' )		
 				
-				$('.fca_qc_add_answer_btn').before( div_to_append )
+				$( '#fca-qc-modal-answers' ).append( div_to_append )
 				
 				fca_qc_delete_button_handlers()
 
@@ -496,9 +496,8 @@ function fca_qc_add_answer_button_handlers() {
 function fca_qc_delete_button_handlers() {
 	var $ = jQuery
 	
-	$('.fca_qc_delete_icon').unbind( 'click' )
-	
-	$('.fca_qc_delete_icon').click( function(){	
+	$('.fca_qc_delete_icon').off( 'click' )	
+	$('.fca_qc_delete_icon').on( 'click', function(){	
 		if ( confirm( fcaQcAdminData.sureWarning_string ) ) {
 			$( this ).closest( '.fca_qc_deletable_item' ).remove()
 			fca_qc_set_question_numbers()
@@ -512,9 +511,8 @@ function fca_qc_delete_button_handlers() {
 //MAKES QUESTION AND RESULT LABELS TOGGLE THE INPUT VISIBILITY ON CLICK
 function fca_qc_add_question_and_result_click_handlers() {
 	var $ = jQuery
-	$( '.fca_qc_question_item' ).unbind( 'click' )
-
-	$( '.fca_qc_question_item' ).click( function(e) {
+	$( '.fca_qc_question_item' ).off( 'click' )
+	$( '.fca_qc_question_item' ).on( 'click', function(e) {
 		var trash = $(e.target).hasClass('fca_qc_delete_icon')
 		if ( fcaQcDragCheck === false && !trash ) {
 			fca_qc_load_question_modal( $(this).data('question') )
@@ -523,9 +521,8 @@ function fca_qc_add_question_and_result_click_handlers() {
 		
 	})	
 	
-	$( '.fca_qc_result_item' ).unbind( 'click' )
-	
-	$( '.fca_qc_result_item' ).click( function(e) {
+	$( '.fca_qc_result_item' ).off( 'click' )
+	$( '.fca_qc_result_item' ).on( 'click', function(e) {
 		var trash = $(e.target).hasClass('fca_qc_delete_icon')
 		if ( fcaQcDragCheck === false && !trash ) {
 			fca_qc_load_result_modal( $(this).data('result') )	
@@ -533,7 +530,7 @@ function fca_qc_add_question_and_result_click_handlers() {
 		
 	})	
 	
-	$( '.fca_qc_question_input_div, .fca_qc_result_input_div, .fca_qc_delete_icon' ).bind( 'click', function(e) {
+	$( '.fca_qc_delete_icon' ).on( 'click', function(e) {
 		e.stopPropagation()
 	})
 	
@@ -543,9 +540,11 @@ function fca_qc_add_question_and_result_click_handlers() {
 // HELPER FUNCTIONS
 ////////////////
 function fca_qc_load_question_modal( question, animClass ) {
+	
 	if( fcaQcAdminData.debug ) {
 		console.log( question )
 	}
+	
 	if( typeof( question ) === 'undefined' ) {
 		return
 	}
@@ -603,6 +602,13 @@ function fca_qc_load_question_modal( question, animClass ) {
 	$('body').css('overflow', 'hidden')
 	$( '#fca-qc-question-modal' ).show()
 	
+	if( $('#fca-qc-modal-answers').hasClass('ui-sortable') ) {
+		$('#fca-qc-modal-answers').sortable( "destroy" )	
+	}
+	if( $('#fca_qc_fixed_answers_order').prop('checked') ) {
+		$('#fca-qc-modal-answers').sortable()		
+	}
+	
 	if ( typeof( animClass ) !== 'undefined' ) {
 		fca_qc_animate_modal( animClass )		
 	}
@@ -617,16 +623,22 @@ function fca_qc_load_question_answers( answers ) {
 	
 	for( var i = 0; i < answers.length; i++ ) {
 		var div_to_append = fcaQcAdminData.answerDiv
-		if( i == 0 ) {
-			div_to_append = fcaQcAdminData.correctAnswerDiv			
+				
+		//CHECK IF IS CORRECT ANSWER
+		if( answers[i].points && answers[i].points == 1 ) {
+			div_to_append = fcaQcAdminData.correctAnswerDiv
 		}
-		
+		//CHECK BACKWARD COMPATIBILITY -- UNDEFINED POINTS && FIRST ANSWER 
+		if ( typeof( answers[i].points ) === 'undefined' && i == 0 ) {
+			div_to_append = fcaQcAdminData.correctAnswerDiv
+		}
+				
 		div_to_append = div_to_append.replace( /{{answer_id}}/g, answers[i].id )
 		div_to_append = div_to_append.replace( /{{answer_text}}/g, answers[i].answer )
-		div_to_append = div_to_append.replace( /{{hint}}/g, answers[i].hint )
+		div_to_append = div_to_append.replace( /{{hint}}/g, answers[i].hint || '' )
 		
 		
-		$( '.fca_qc_add_answer_btn' ).before( div_to_append )
+		$( '#fca-qc-modal-answers' ).append( div_to_append )
 		if ( answers[i].img ) {
 			$('.fca_qc_answer_input_div').last().find('.fca_qc_image').attr( 'src', answers[i].img )
 			$('.fca_qc_answer_input_div').last().find('.fca_qc_quiz_image_upload_btn').hide()	
@@ -659,9 +671,9 @@ function fca_qc_save_question_answers() {
 		}
 		answers.push({
 			id: answerID,
-			answer: $( this ).find( '#fca-qc-answer-text' ).val(),
+			answer: $( this ).find( '.fca_qc_question_texta' ).val(),
 			img: $( this ).find( '.fca_qc_image' ).attr( 'src' ),
-			hint: $( '#fca-qc-hint-text' ).val(),
+			hint: $( '#fca-qc-hint-text-td textarea' ).val(),
 			points:  $( this ).find( '.fca-qc-weighted-question-points' ).val(),
 			results: $( this ).find( '.fca_qc_answer_personality' ).val()
 		})
@@ -923,7 +935,7 @@ function fca_qc_set_question_numbers(){
 function fca_qc_attach_image_upload_handlers() {
 	var $ = jQuery
 	//ACTION WHEN CLICKING IMAGE UPLOAD
-	$('.fca_qc_quiz_image_upload_btn, .fca_qc_image, .fca_qc_quiz_image_change_btn').unbind( 'click' )
+	$('.fca_qc_quiz_image_upload_btn, .fca_qc_image, .fca_qc_quiz_image_change_btn').off( 'click' )
 	//HANDLER FOR RESULTS AND META IMAGES
 	$('.fca_qc_quiz_image_upload_btn, .fca_qc_image, .fca_qc_quiz_image_change_btn').on( 'click', function(e) {
 		
@@ -965,8 +977,8 @@ function fca_qc_attach_image_upload_handlers() {
 	})
 	
 	//ACTION WHEN CLICKING REMOVE IMAGE
-	$('.fca_qc_quiz_image_revert_btn').unbind( 'click' )
-	$('.fca_qc_quiz_image_revert_btn').click( function(e) {
+	$('.fca_qc_quiz_image_revert_btn').off( 'click' )
+	$('.fca_qc_quiz_image_revert_btn').on( 'click', function(e) {
 		
 		$( this.parentNode ).siblings('.fca_qc_image').attr('src', '' )
 		$( this.parentNode ).siblings('.fca_qc_quiz_image_upload_btn').show()
@@ -982,7 +994,7 @@ var fcaQcDragCheck = false
 function fca_qc_add_drag_and_drop_sort() {
 	var $ = jQuery
 
-	$( '.fca_qc_sortable_results, .fca_qc_sortable_questions, .fca_qc_question_input_div' ).sortable({
+	$( '.fca_qc_sortable_results, .fca_qc_sortable_questions' ).sortable({
 		revert: true,
 		cancel: ':input,button, .fca-wysiwyg-html',
 		start: function(){
@@ -994,13 +1006,13 @@ function fca_qc_add_drag_and_drop_sort() {
 
 	})
 
-	$( '.fca_qc_sortable_results' ).unbind( 'sortupdate' )
+	$( '.fca_qc_sortable_results' ).off( 'sortupdate' )
 	$( '.fca_qc_sortable_results' ).on( 'sortupdate', function( event, ui ) {
 		fca_qc_set_score_ranges()
 	})
 
 
-	$( '.fca_qc_sortable_questions' ).unbind( 'sortupdate' )
+	$( '.fca_qc_sortable_questions' ).off( 'sortupdate' )
 	$( '.fca_qc_sortable_questions' ).on( 'sortupdate', function( event, ui ) {
 		fca_qc_set_question_numbers()
 	})

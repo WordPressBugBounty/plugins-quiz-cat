@@ -236,7 +236,7 @@ jQuery( document ).ready(function($) {
 		var isCorrect = false
 
 		// ADD TO START COUNTER AFTER ANSWERING FIRST QUESTION
-		if ( thisQuiz.currentQuestion === 1) {
+		if ( thisQuiz.currentQuestion === 1 ) {
 			add_activity( thisQuiz.ajaxurl, thisQuiz.nonce, thisQuiz.quiz_id, 'starts' )
 		}
 		
@@ -560,88 +560,31 @@ jQuery( document ).ready(function($) {
 
 
 	function showQuestion( quiz, showAnim ) {
-
 		
-		if ( quiz.quiz_settings.disable_scroll ) {
-			//DO NOTHING
-		} else if ( quiz.quiz_settings.autostart_quiz === 'on' && quiz.currentQuestion === 0 ) {
-			//DO NOTHING
-		} else {
-			scrollQuizInToView( quiz.selector )		
+		handleQuizScrolling(quiz)
 
-		}
 		if ( quiz.currentQuestion < quiz.questionCount ) {
-
+			// Handle timer if needed
 			if( quiz.quiz_settings.timer_mode === 'question' && quiz.currentQuestion !== 0 ){
-				// restart the timer
 				fca_qc_start_timer( quiz )			
 			}
 
+			// Update question counter
 			$( quiz.selector ).find( '.fca_qc_question_count' ).html( ( quiz.currentQuestion + 1 ) + "/" + quiz.questionCount )
 			
-			var question = quiz.questions[quiz.currentQuestion].question.replace( /\n/g, "<br />" )
-			$( quiz.selector ).find( '#fca_qc_question' ).html( question )
-			$( quiz.selector ).find( '#fca_qc_question_back' ).html( question )
+			// Set question text and image
+			setQuestionContent(quiz)
 
-			var img = quiz.questions[quiz.currentQuestion].img
-			$( quiz.selector ).find( '#fca_qc_answer_container' ).find( '.fca_qc_quiz_question_img' ).attr( 'src', img )
-			$( quiz.selector ).find( '#fca_qc_back_container' ).find( '.fca_qc_quiz_question_img' ).attr( 'src', img )
-			$( quiz.selector ).find( '#fca_qc_answer_container' ).data( 'id', quiz.questions[quiz.currentQuestion].id )
+			// Handle lazy loading
+			handleLazyLoading(quiz)
 			
-			if ( quiz.questions[quiz.currentQuestion].correct ){
-				var correct_answer = quiz.questions[quiz.currentQuestion].correct - 1
-			} else {
-				var correct_answer = 0
-			}
-
-			if ( quiz.quiz_settings.quiz_type === 'mc' || quiz.quiz_settings.quiz_type === '' ) {
-				var answer = quiz.questions[quiz.currentQuestion].answers[correct_answer]
-
-			}
-			
-			if ( quizzes[quiz.quiz_id].quiz_settings.fixed_answers === 'off' || !quizzes[quiz.quiz_id].quiz_settings.fixed_answers ) {
-				var quiz_answers = shuffleArray( quiz.questions[quiz.currentQuestion].answers )
-			}
-			else {
-				var quiz_answers = quiz.questions[quiz.currentQuestion].answers
-			}
-			
-			//LAZY LOAD NEXT IMAGE 
-			if ( (quiz.currentQuestion + 1) < quiz.questionCount ) {
-				lazyLoadQuestion ( quiz.questions[quiz.currentQuestion+1] )
-			} else {
-				lazyLoadResults( quiz )
-			}
-			
+			// Hide all answer divs initially
 			$( quiz.selector ).find( '.fca_qc_answer_div' ).hide()				
 					
-			//PUT OUR ANSWER DATA INTO THE DIVS, BUT IF ITS EMPTY HIDE THE PARENT ELEMENT
-			for (var i = 0; i<quiz_answers.length; i++) {
-				//NOTE: CHECKS IF THE HTML IS EQUAL TO ADD QUIZ IMAGE WITH NOTHING E.G. EMPTY SVG ICON
-				var hasImg = ( typeof quiz_answers[i].img !== 'undefined' ) && (  quiz_answers[i].img !== '' ) 
-				var hasAnswer = ( typeof quiz_answers[i].answer !== 'undefined' ) && (  quiz_answers[i].answer !== '' ) 
-				if ( hasImg || hasAnswer ) {
-					//set quiz current answer property as the question number ( question-data attribute)
-					if ( ( quiz.quiz_settings.quiz_type === 'mc'  || quiz.quiz_settings.quiz_type === '' ) && quiz_answers[i].answer === answer.answer &&  quiz_answers[i].img === answer.img ) {
-						quiz.currentAnswer = $( quiz.selector ).find( '.fca_qc_answer_div' ).eq(i).attr( 'data-question' )
-					}
-					if ( quiz.quiz_settings.quiz_type === 'pt' || quiz.quiz_settings.quiz_type === 'wq' ) {
-						$( quiz.selector ).find( '.fca_qc_answer_div' ).eq(i).data( 'results', quiz_answers[i].results )
-					}
-						
-					$( quiz.selector ).find( '.fca_qc_answer_div' ).eq(i).find('.fca_qc_quiz_answer_img').attr( 'src', quiz_answers[i].img )
-					$( quiz.selector ).find( '.fca_qc_answer_div' ).eq(i).find('.fca_qc_answer_span').html( svg_square + quiz_answers[i].answer.replace( /\n/g, "<br />" ) )
-					$( quiz.selector ).find( '.fca_qc_answer_div' ).eq(i).data( 'id', quiz_answers[i].id )
-					if ( showAnim ) {
-						$( quiz.selector ).find( '.fca_qc_answer_div' ).eq(i).fadeIn()
-					} else {
-						$( quiz.selector ).find( '.fca_qc_answer_div' ).eq(i).show()
-					}
-					
-				}
-		
-			}
+			// Populate answer divs
+			populateAnswerDivs(quiz, showAnim)
 
+			// Scale flip box after images load
 			$( quiz.selector ).find( '#fca_qc_answer_container' ).waitForImages( function() {
 				maybe_add_quarter_class( quiz.selector )
 				scale_flip_box_question( quiz.selector )
@@ -650,8 +593,97 @@ jQuery( document ).ready(function($) {
 			quiz.currentQuestion = quiz.currentQuestion + 1
 
 		} else {
+			// End quiz if no more questions
 			quiz.time_remaining = ( $( '#fca_qc_quiz_' + quiz.quiz_id ).data( 'endDate' ) - Date.now() ) / 1000
 			endTest( quiz )
+		}
+	}
+
+	function handleQuizScrolling(quiz) {
+		if ( quiz.quiz_settings.disable_scroll ) {
+			return
+		}
+		if ( quiz.quiz_settings.autostart_quiz === 'on' && quiz.currentQuestion === 0 ) {
+			return
+		}
+		scrollQuizInToView( quiz.selector )
+	}
+
+	function setQuestionContent(quiz) {
+		$( quiz.selector ).find( '#fca_qc_answer_container' ).data( 'id', quiz.questions[quiz.currentQuestion].id )
+
+		var question = quiz.questions[quiz.currentQuestion].question.replace( /\n/g, "<br />" )
+		$( quiz.selector ).find( '#fca_qc_question' ).html( question )
+		$( quiz.selector ).find( '#fca_qc_question_back' ).html( question )
+
+		var img = quiz.questions[quiz.currentQuestion].img
+		$( quiz.selector ).find( '#fca_qc_answer_container' ).find( '.fca_qc_quiz_question_img' ).attr( 'src', img )
+		$( quiz.selector ).find( '#fca_qc_back_container' ).find( '.fca_qc_quiz_question_img' ).attr( 'src', img )
+		
+	}
+
+	function getCorrectAnswer(quiz) {
+		if ( quiz.quiz_settings.quiz_type === 'mc' || quiz.quiz_settings.quiz_type === '' ) {
+			var correct_answer = quiz.questions[quiz.currentQuestion].answers.filter(function( element ) {
+				return element.points == 1
+			})[0]
+			
+			//BACKWARD COMPATIBILITY FALLBACK
+			if( typeof( correct_answer ) === 'undefined' ) {
+				correct_answer = quiz.questions[quiz.currentQuestion].answers[0]
+			}
+			return correct_answer
+		}
+		return null
+	}
+
+	function getQuizAnswers(quiz) {
+		if ( quizzes[quiz.quiz_id].quiz_settings.fixed_answers === 'off' || !quizzes[quiz.quiz_id].quiz_settings.fixed_answers ) {
+			return shuffleArray( quiz.questions[quiz.currentQuestion].answers )
+		}
+		return quiz.questions[quiz.currentQuestion].answers
+	}
+
+	function handleLazyLoading(quiz) {
+		if ( (quiz.currentQuestion + 1) < quiz.questionCount ) {
+			lazyLoadQuestion ( quiz.questions[quiz.currentQuestion+1] )
+		} else {
+			lazyLoadResults( quiz )
+		}
+	}
+
+	function populateAnswerDivs(quiz, showAnim) {
+		
+		var correct_answer = getCorrectAnswer(quiz)
+		var quiz_answers = getQuizAnswers(quiz)
+		
+		for (var i = 0; i < quiz_answers.length; i++) {
+			var hasImg = ( typeof quiz_answers[i].img !== 'undefined' ) && (  quiz_answers[i].img !== '' ) 
+			var hasAnswer = ( typeof quiz_answers[i].answer !== 'undefined' ) && (  quiz_answers[i].answer !== '' ) 
+			
+			if ( hasImg || hasAnswer ) {
+				var answerDiv = $( quiz.selector ).find( '.fca_qc_answer_div' ).eq(i)
+				
+				if ( ( quiz.quiz_settings.quiz_type === 'mc'  || quiz.quiz_settings.quiz_type === '' ) && correct_answer ) {
+					if( quiz_answers[i].answer === correct_answer.answer &&  quiz_answers[i].img === correct_answer.img  ) {
+						quiz.currentAnswer = answerDiv.attr( 'data-question' )
+					}
+				}
+				
+				if ( quiz.quiz_settings.quiz_type === 'pt' || quiz.quiz_settings.quiz_type === 'wq' ) {
+					answerDiv.data( 'results', quiz_answers[i].results )
+				}
+					
+				answerDiv.find('.fca_qc_quiz_answer_img').attr( 'src', quiz_answers[i].img )
+				answerDiv.find('.fca_qc_answer_span').html( svg_square + quiz_answers[i].answer.replace( /\n/g, "<br />" ) )
+				answerDiv.data( 'id', quiz_answers[i].id )
+				
+				if ( showAnim ) {
+					answerDiv.fadeIn()
+				} else {
+					answerDiv.show()
+				}
+			}
 		}
 	}
 	
@@ -968,7 +1000,7 @@ jQuery( document ).ready(function($) {
 						}
 				} 
 				
-				$(document).unbind('keypress')
+				$(document).off('keypress')
 				$( quiz.selector ).find( '.tooltipstered' ).tooltipster('close')
 								
 				quiz.user = {
@@ -1008,9 +1040,9 @@ jQuery( document ).ready(function($) {
 			show_sharing_and_result_screen ( quiz, result )
 		} else {
 			//BIND ENTER TO SUBMIT BUTTON
-			$(document).keypress(function(e){
-				if (e.which === 13){
-					$( quiz.selector ).find( '.fca_qc_submit_email_button' ).click()
+			$(document).on( 'keypress', function(e){
+				if ( e.which === 13 ) {
+					$( quiz.selector ).find( '.fca_qc_submit_email_button' ).trigger('click')
 					//make sure forms submit
 					return false
 				}

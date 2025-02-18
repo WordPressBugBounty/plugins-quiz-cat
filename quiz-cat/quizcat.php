@@ -8,7 +8,7 @@
 	Author: Fatcat Apps
 	Author URI: https://fatcatapps.com/
 	License: GPLv2
-	Version: 3.0.7
+	Version: 3.0.8
 */
 
 
@@ -24,7 +24,7 @@ if ( !defined ('FCA_QC_PLUGIN_DIR') ) {
 	if ( FCA_QC_DEBUG ) {
 		define( 'FCA_QC_PLUGIN_VER', '3.0.' . time() );
 	} else {
-		define( 'FCA_QC_PLUGIN_VER', '3.0.7' );
+		define( 'FCA_QC_PLUGIN_VER', '3.0.8' );
 	}
 	define( 'FCA_QC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 	define( 'FCA_QC_PLUGINS_URL', plugins_url( '', __FILE__ ) );

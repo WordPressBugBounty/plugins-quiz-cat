@@ -1,9 +1,9 @@
 var $ = jQuery
-$('#fca-qc-add-new-button').click(function(){
+$('#fca-qc-add-new-button').on( 'click', function(){
 	$('.fca-qc-modal').show()
 })
 
-$('.fca-qc-modal-close').click(function(){
+$('.fca-qc-modal-close').on( 'click', function(){
 	$('.fca-qc-modal').hide()
 }) 
 

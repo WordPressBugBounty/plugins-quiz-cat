@@ -98,9 +98,9 @@ img.fca_qc_quiz_question_img {
 
 div.fca_qc_quiz svg.fca_qc_rectancle {
 	display: inline-block;
-	vertical-align: top;
-	margin-right: 8px;
-	margin-left: 0;
+	position: absolute;
+	left: 15px;
+	top: 15px;
 	width: 26px;
 	height: 26px;
 }
@@ -118,11 +118,10 @@ div.fca_qc_quiz .fca_qc_answer_span.fakehover svg.fca_qc_rectancle rect {
 
 div.fca_qc_quiz .fca_qc_answer_span.fakehover:after { 
 	content: "✓";
-	position: absolute; 
+	position: absolute;
 	margin: 0;
-	left: 6px;
-	top: 0;
-	display: block;
+	left: 21px; 
+	top: 16px;
 	height: 26px;
 	z-index: 1;
 	color: #fff;
@@ -136,14 +135,11 @@ div.fca_qc_quiz .fca_qc_answer_checkbox {
 }
 
 div.fca_qc_quiz span.fca_qc_answer_span {
-	display: inline-block;
-	width:100%;
+	display: block;
 	padding: 0;
 	margin: 0;
 	font-size: 16px;
 	color: #151515;
-	text-indent: initial;
-	position: relative;
 }
 
 div.fca_qc_quiz button.fca_qc_button {
@@ -185,6 +181,7 @@ div.fca_qc_quiz button.fca_qc_next_question:hover {
 
 div.fca_qc_quiz div.fca_qc_answer_div {
 	box-sizing: border-box;
+	position: relative;
 	display: inline-block;
 	margin-bottom: 15px;
 	width: 100%;
@@ -196,7 +193,7 @@ div.fca_qc_quiz div.fca_qc_answer_div {
 	font-weight: normal;
 	cursor: pointer;
 	color: #151515;
-	padding: 15px;
+	padding: 15px 15px 15px 50px;
 }
 
 div.fca_qc_quiz div.fca_qc_answer_div.fca-qc-twoup {
@@ -316,7 +313,7 @@ div.fca_qc_quiz p.fca_qc_question_response_hint {
 }
 
 .fca-qc-flipper div {
-	padding: 5px;
+	padding: 15px;
 } 
 
 div.fca_qc_quiz p.fca_qc_back_response {
@@ -576,7 +573,7 @@ div.fca_qc_quiz span.fca_qc_mobile_check {
 
 @media (max-width: 600px) {
 	.fca-qc-flipper div {
-		padding: 0;
+		padding: 8px;
 	}
 		
 	div.fca_qc_quiz span.fca_qc_mobile_check {

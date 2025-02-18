@@ -1,1 +1,1 @@
-<? //NOTHING HERE ?>
+<?php //NOTHING HERE

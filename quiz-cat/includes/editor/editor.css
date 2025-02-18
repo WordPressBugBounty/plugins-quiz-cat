@@ -15,6 +15,7 @@
 
 .postbox .inside {
     padding: 15px;
+	display: block !important; /* FIX POSSIBLE CONFLICTS */
 }
 
 
@@ -43,9 +44,6 @@
 	overflow-y: auto;
 } 
 
-input.fca-qc-weighted-question-points {
-	margin-bottom: 24px;
-}
 @-webkit-keyframes slideInDown {
     0% {
         -webkit-transform: translate3d(0,-100%,0);
@@ -498,10 +496,6 @@ body .ui-tooltip {
 	font-weight: bold;
 }
 
-.fca_qc_result_input_div {
-	min-height: 293px;
-}
-
 .fca_qc_delete_icon {
 	margin-top: 4px;
 	padding: 4px;
@@ -572,8 +566,8 @@ button.fca_qc_add_btn.button-secondary {
 	background-color: #d65079;
 }
 
-.fca_qc_sortable_results, .fca_qc_question_item {
-	cursor: move;	
+.ui-sortable-handle {
+    cursor: move;
 }
 
 .fca_qc_add_answer_btn {

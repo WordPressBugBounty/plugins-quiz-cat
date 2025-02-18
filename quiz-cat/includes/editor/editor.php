@@ -220,6 +220,7 @@ function fca_qc_render_question_settings_meta_box( $post ) {
 	$settings = get_post_meta ( $post->ID, 'quiz_cat_settings', true );
 	$show_explanations = empty ( $settings['explanations'] ) ? '' : true;
 	$shuffle_questions = empty ( $settings['shuffle_questions'] ) ? '' : true;
+	$fixed_answers = empty ( $settings['fixed_answers'] ) ? '' : true;
 	$hide_answers = empty ( $settings['hide_answers'] ) ? '' : true;
 	
 	ob_start(); ?>
@@ -247,6 +248,17 @@ function fca_qc_render_question_settings_meta_box( $post ) {
 				<div class='onoffswitch'>
 					<input type='checkbox' class='onoffswitch-checkbox' id='fca_qc_shuffle_question_order' style='display:none;' name='fca_qc_shuffle_question_order' <?php checked( $shuffle_questions ) ?> ></input>		
 				<label class='onoffswitch-label' for='fca_qc_shuffle_question_order'><span class='onoffswitch-inner'><span class='onoffswitch-switch'></span></span></label>
+				</div>
+			</td>
+		</tr>	
+		<tr>
+			<th>
+				<label class='fca_qc_admin_label' for='fca_qc_fixed_answers_order'><?php echo esc_attr__('Fixed Answer Order', 'quiz-cat') . fca_qc_tooltip( __( 'Best used for True/False or Yes/No quizzes. If enabled, answers will remain in the same order each time someone takes your quiz.','quiz-cat') ) ?></label>
+			</th>
+			<td>
+				<div class='onoffswitch'>
+					<input type='checkbox' class='onoffswitch-checkbox' id='fca_qc_fixed_answers_order' style='display:none;' name='fca_qc_fixed_answers_order' <?php checked( $fixed_answers ) ?> ></input>		
+				<label class='onoffswitch-label' for='fca_qc_fixed_answers_order'><span class='onoffswitch-inner'><span class='onoffswitch-switch'></span></span></label>
 				</div>
 			</td>
 		</tr>
@@ -333,6 +345,7 @@ function fca_qc_render_question_modal() {
 				</td>
 			</tr>
 		</table>
+		<div id='fca-qc-modal-answers'></div>
 		<button type='button' title='<?= esc_attr_e( 'New Answer', 'quiz-cat') ?>' class='button-secondary fca_qc_add_btn fca_qc_add_answer_btn' >
 		<span class='dashicons dashicons-plus' style='vertical-align: text-top;'></span><?= esc_attr_e('New Answer', 'quiz-cat') ?></button>
 	</div>	
@@ -346,18 +359,19 @@ function fca_qc_render_answer( $correct_answer = false ) {
 	
 	if( $correct_answer ) {	?>
 	<div class='fca_qc_answer_input_div'>
-		<?php echo fca_qc_input( 'answer_id', '', '{{answer_id}}', 'hidden' ) ?>		
+		<?php echo fca_qc_input( 'answer_id', '', '{{answer_id}}', 'hidden' ) ?>	
+		<?php echo fca_qc_input( 'weighted-question-points', '', 1, 'hidden' ) ?>		
 		<table class='fca_qc_inner_setting_table'>			
 			<tr>
 				<th class='fca_qc_answer_header'><?php esc_attr_e( 'Correct Answer', 'quiz-cat' ) ?></th>				
 				<td>
-					<?php echo fca_qc_input( '', esc_attr__( 'e.g. No', 'quiz-cat' ), '{{answer_text}}', 'textarea', 'id="fca-qc-answer-text"' ) ?>
+					<?php echo fca_qc_input( '', esc_attr__( 'e.g. No', 'quiz-cat' ), '{{answer_text}}', 'textarea' ) ?>
 				</td>
 			</tr>
 			<?php if ( function_exists( 'fca_qc_save_quiz_settings_premium' ) ) { ?>
 			<tr class='fca_qc_explanations_tr'>
 				<th><?php esc_attr_e( 'Explanation', 'quiz-cat' ) ?></th>
-				<td><?php echo fca_qc_input( '', esc_attr__('Explanation', 'quiz-cat'), '{{hint}}', 'textarea', 'id="fca-qc-hint-text"' ) ?></td>
+				<td id='fca-qc-hint-text-td'><?php echo fca_qc_input( '', esc_attr__('Explanation', 'quiz-cat'), '{{hint}}', 'textarea' ) ?></td>
 			</tr>
 			<tr>
 				<th></th>
@@ -368,11 +382,12 @@ function fca_qc_render_answer( $correct_answer = false ) {
 	</div>
 	<?php } else { ?>
 	<div class='fca_qc_answer_input_div fca_qc_deletable_item'>
-		<?php echo fca_qc_input( 'answer_id', '', '{{answer_id}}', 'hidden' ) ?>		
+		<?php echo fca_qc_input( 'answer_id', '', '{{answer_id}}', 'hidden' ) ?>
+		<?php echo fca_qc_input( 'weighted-question-points', '', 0, 'hidden' ) ?>		
 		<table class='fca_qc_inner_setting_table'>		
 			<tr>
 				<th class='fca_qc_answer_header'><?php esc_attr_e( 'Wrong Answer', 'quiz-cat' ) ?><?php echo fca_qc_add_delete_button() ?></th>
-				<td><?php echo fca_qc_input( '', esc_attr__( 'e.g. Yes', 'quiz-cat' ), '{{answer_text}}', 'textarea', 'id="fca-qc-answer-text"' ) ?>
+				<td><?php echo fca_qc_input( '', esc_attr__( 'e.g. Yes', 'quiz-cat' ), '{{answer_text}}', 'textarea' ) ?>
 				<?php if ( function_exists( 'fca_qc_save_quiz_settings_premium' ) ) {
 					echo fca_qc_add_image_input( '', 'answer_image' );
 				}?>
@@ -382,6 +397,7 @@ function fca_qc_render_answer( $correct_answer = false ) {
 	</div>
 	<?php 
 	}
+	
 	return ob_get_clean();	
 }
 
