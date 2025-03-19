@@ -129,7 +129,9 @@ class QuizCat_List_Table extends WP_List_Table {
 		if ( 'trash' === $this->current_action() ) {
 			$postID = empty( $_GET['post'] ) ? '' : intval( $_GET['post'] );
 			$nonce = empty( $_GET['fca_qc_nonce'] ) ? '' : sanitize_text_field( $_GET['fca_qc_nonce'] );
-			if( wp_verify_nonce( $nonce, 'fca_qc_delete' ) && $postID ){
+			$post_type = get_post_type( $postID );
+			
+			if( wp_verify_nonce( $nonce, 'fca_qc_delete' ) && $post_type == 'fca_qc_quiz' && current_user_can( 'edit_post', $postID ) ){
 				wp_delete_post( $postID );
 			} else {
 				wp_die( 'Not authorized, please try logging in again' );
@@ -139,7 +141,9 @@ class QuizCat_List_Table extends WP_List_Table {
 		if ( 'clone' === $this->current_action() ) {
 			$postID = empty( $_GET['post'] ) ? '' : intval( $_GET['post'] );
 			$nonce = empty( $_GET['fca_qc_nonce'] ) ? '' : sanitize_text_field( $_GET['fca_qc_nonce'] );
-			if( wp_verify_nonce( $nonce, 'fca_qc_clone' ) && $postID ){
+			$post_type = get_post_type( $postID );
+			
+			if( wp_verify_nonce( $nonce, 'fca_qc_clone' ) && $post_type == 'fca_qc_quiz' && current_user_can( 'edit_post', $postID ) ){
 				fca_qc_clone_quiz( $postID );
 			} else {
 				wp_die( 'Not authorized, please try logging in again' );

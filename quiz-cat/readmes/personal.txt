@@ -8,7 +8,7 @@ Requires at least: 4.0
 Tested up to: 6.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 3.0.8
+Stable tag: 3.0.9
 
 Quiz Cat Lets You Create Beautiful Viral BuzzFeed-style Quizzes That Drive Social Shares & User Engagement. Set It Up In 2 Minutes.
 
@@ -145,11 +145,14 @@ add_filter( 'fca_qc_quiz_text', 'my_quiz_callback_filter' );`
 
 == Changelog ==
 
+= Quiz Cat 3.0.9 =
+* Fix - harden clone quiz function to check user capabilities and post type.
+
 = Quiz Cat 3.0.8 =
 * Added fixed answer order option
 * Added image support to weighted quiz type
 * Fixed "undefined" text in quiz explanation
-* Fixed possible theme conflct where question modal was hidden
+* Fixed possible theme conflict where question modal was hidden
 * Changed quiz question checkbox alignment
 * Changed allowed HTML sanitization in wysiwyg/wysi editor to match wp_kses_post allowed html
 * Removed "Show Correct Answer" option for weighted & personality quizzes
