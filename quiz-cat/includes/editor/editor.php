@@ -547,7 +547,7 @@ function fca_qc_render_result( $result = array() ) {
 
 function fca_qc_render_translations_metabox ( $post ) {
 
-	global $global_quiz_text_strings;
+	$global_quiz_text_strings = fca_qc_global_quiz_text_strings();
 	$translations = get_post_meta ( $post->ID, 'quiz_cat_translations', true );
 	$text_strings = empty( $translations ) ? $global_quiz_text_strings : $translations;
 
@@ -739,7 +739,7 @@ function fca_qc_save_quiz_settings( $post_id ) {
 //SAVE TRANSLATIONS
 function fca_qc_save_quiz_translations( $post_id ) {
 	
-	global $global_quiz_text_strings;
+	$global_quiz_text_strings = fca_qc_global_quiz_text_strings();
 	$fields = $settings = array();
 	$premium_translations = array(
 		'timedout',

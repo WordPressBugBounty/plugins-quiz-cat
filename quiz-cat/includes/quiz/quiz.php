@@ -78,8 +78,8 @@ function fca_qc_do_quiz( $atts ) {
 		}		
 		
 		$quiz_text_strings = fca_qc_set_quiz_text_strings( $post_id );
-		global $global_quiz_text_strings;
-					
+		$global_quiz_text_strings = fca_qc_global_quiz_text_strings();
+		
 		$quiz_data = array(
 			'quiz_id' => $post_id,
 			'quiz_meta' => $quiz_meta,
@@ -288,7 +288,7 @@ function fca_qc_maybe_add_custom_styles( $post_id ) {
 //SET UP THE MAIN QUIZ TEXTS FOR A QUIZ - CHECK FOR LOCALIZED STRINGS, THEN ANY PHP FILTERS, THEN SHORTCODES
 function fca_qc_set_quiz_text_strings( $post_id ) {
 	
-	global $global_quiz_text_strings;
+	$global_quiz_text_strings = fca_qc_global_quiz_text_strings();
 
 	// Check for custom translations from the editor
 	$translations = get_post_meta ( $post_id, 'quiz_cat_translations', true );

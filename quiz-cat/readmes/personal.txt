@@ -5,10 +5,10 @@ Tags: quiz, quizzes, viral quiz, buzzfeed quiz, trivia quiz
 Author URI: https://fatcatapps.com/
 Plugin URI: https://fatcatapps.com/quizcat
 Requires at least: 4.0
-Tested up to: 6.7
+Tested up to: 6.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 3.0.9
+Stable tag: 3.0.10
 
 Quiz Cat Lets You Create Beautiful Viral BuzzFeed-style Quizzes That Drive Social Shares & User Engagement. Set It Up In 2 Minutes.
 
@@ -144,6 +144,10 @@ add_filter( 'fca_qc_quiz_text', 'my_quiz_callback_filter' );`
 6. The Quiz Cat user interface
 
 == Changelog ==
+
+= Quiz Cat 3.0.10 =
+* Changed 'global_quiz_text_strings' to function instead of global to improve compatibility
+* Tested up to WordPress 6.8
 
 = Quiz Cat 3.0.9 =
 * Fix - harden clone quiz function to check user capabilities and post type.

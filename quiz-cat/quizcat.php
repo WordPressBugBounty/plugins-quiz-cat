@@ -8,7 +8,7 @@
 	Author: Fatcat Apps
 	Author URI: https://fatcatapps.com/
 	License: GPLv2
-	Version: 3.0.9
+	Version: 3.0.10
 */
 
 
@@ -24,7 +24,7 @@ if ( !defined ('FCA_QC_PLUGIN_DIR') ) {
 	if ( FCA_QC_DEBUG ) {
 		define( 'FCA_QC_PLUGIN_VER', '3.0.' . time() );
 	} else {
-		define( 'FCA_QC_PLUGIN_VER', '3.0.9' );
+		define( 'FCA_QC_PLUGIN_VER', '3.0.10' );
 	}
 	define( 'FCA_QC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 	define( 'FCA_QC_PLUGINS_URL', plugins_url( '', __FILE__ ) );
@@ -64,31 +64,33 @@ if ( !defined ('FCA_QC_PLUGIN_DIR') ) {
 	}	
 	
 	//FILTERABLE FRONT-END STRINGS
-	$global_quiz_text_strings = array (
-		'no_quiz_found' => esc_attr__('No Quiz found', 'quiz-cat'),
-		'timedout' => esc_attr__('Timed out!', 'quiz-cat'),
-		'time_taken' => esc_attr__('Total time taken:', 'quiz-cat'),
-		'correct' => esc_attr__('Correct!', 'quiz-cat'),
-		'wrong' => esc_attr__('Wrong!', 'quiz-cat'),
-		'your_answer' => esc_attr__('Your answer:', 'quiz-cat'),
-		'correct_answer' => esc_attr__('Correct answer:', 'quiz-cat'),
-		'question' => esc_attr__('Question', 'quiz-cat'),
-		'next' =>  esc_attr__('Next', 'quiz-cat'),
-		'you_got' =>  esc_attr__('You got', 'quiz-cat'),
-		'out_of' => esc_attr__('out of', 'quiz-cat'),
-		'your_answers' =>  esc_attr__('Your Answers', 'quiz-cat'),
-		'start_quiz' => esc_attr__('Start Quiz', 'quiz-cat'),
-		'retake_quiz' => esc_attr__('Retake Quiz', 'quiz-cat'),
-		'share_results' => esc_attr__('SHARE YOUR RESULTS', 'quiz-cat'),
-		'i_got' => esc_attr__('I got', 'quiz-cat'),
-		'skip_this_step' => esc_attr__('Skip this step', 'quiz-cat'),
-		'your_name' => esc_attr__('Your Name', 'quiz-cat'),
-		'your_email' => esc_attr__('Your Email', 'quiz-cat'),
-		'share'  => esc_attr__('Share', 'quiz-cat'),
-		'tweet'  =>  esc_attr__('Tweet', 'quiz-cat'),
-		'pin'  =>  esc_attr__('Pin', 'quiz-cat'),
-		'email'  =>  esc_attr__('Email', 'quiz-cat') 
-	);
+	function fca_qc_global_quiz_text_strings() {
+		return array (
+			'no_quiz_found' => esc_attr__('No Quiz found', 'quiz-cat'),
+			'timedout' => esc_attr__('Timed out!', 'quiz-cat'),
+			'time_taken' => esc_attr__('Total time taken:', 'quiz-cat'),
+			'correct' => esc_attr__('Correct!', 'quiz-cat'),
+			'wrong' => esc_attr__('Wrong!', 'quiz-cat'),
+			'your_answer' => esc_attr__('Your answer:', 'quiz-cat'),
+			'correct_answer' => esc_attr__('Correct answer:', 'quiz-cat'),
+			'question' => esc_attr__('Question', 'quiz-cat'),
+			'next' =>  esc_attr__('Next', 'quiz-cat'),
+			'you_got' =>  esc_attr__('You got', 'quiz-cat'),
+			'out_of' => esc_attr__('out of', 'quiz-cat'),
+			'your_answers' =>  esc_attr__('Your Answers', 'quiz-cat'),
+			'start_quiz' => esc_attr__('Start Quiz', 'quiz-cat'),
+			'retake_quiz' => esc_attr__('Retake Quiz', 'quiz-cat'),
+			'share_results' => esc_attr__('SHARE YOUR RESULTS', 'quiz-cat'),
+			'i_got' => esc_attr__('I got', 'quiz-cat'),
+			'skip_this_step' => esc_attr__('Skip this step', 'quiz-cat'),
+			'your_name' => esc_attr__('Your Name', 'quiz-cat'),
+			'your_email' => esc_attr__('Your Email', 'quiz-cat'),
+			'share'  => esc_attr__('Share', 'quiz-cat'),
+			'tweet'  =>  esc_attr__('Tweet', 'quiz-cat'),
+			'pin'  =>  esc_attr__('Pin', 'quiz-cat'),
+			'email'  =>  esc_attr__('Email', 'quiz-cat') 
+		);
+	}
 	
 	function fca_qc_add_plugin_action_links( $links ) {
 		
@@ -104,12 +106,5 @@ if ( !defined ('FCA_QC_PLUGIN_DIR') ) {
 		
 	}
 	add_filter( 'plugin_action_links_' . FCA_QC_PLUGINS_BASENAME, 'fca_qc_add_plugin_action_links' );
-
-	/* Localization */
-	function fca_qc_load_localization() {
-		load_plugin_textdomain( 'quiz-cat', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-	}
-	add_action( 'init', 'fca_qc_load_localization' );
-	
 
 }
