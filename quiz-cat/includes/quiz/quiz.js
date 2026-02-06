@@ -220,9 +220,41 @@ jQuery( document ).ready(function($) {
 
 
 	$( '.fca_qc_answer_div' ).on( 'click', function() {
+		
+		var thisQuiz = quizzes[ get_quiz_id( $(this).closest('.fca_qc_quiz') ) ]
+		
+		if( thisQuiz.quiz_settings.hasOwnProperty('confirm_button') && thisQuiz.quiz_settings.confirm_button === 'on' ) {
+			
+			$('.fakehover').removeClass('fakehover')
+			
+			$(this).addClass('fakehover')
+			$(this).children('span').addClass('fakehover')
+			
+		} else {
+			fca_qc_process_answer( thisQuiz, $(this) )			
+		}
+		
+	})
+	
+	$( '.fca_qc_confirm_button' ).on( 'click', function() {
+				
+		var thisQuiz = quizzes[ get_quiz_id( $(this).closest('.fca_qc_quiz') ) ]
+		
+		var $answer = $( thisQuiz.selector ).find( '.fca_qc_answer_div.fakehover' )
+		
+		if( $answer.length > 0 ) {
+			fca_qc_process_answer( thisQuiz, $answer )			
+		}
+		//REMOVE ACTIVE STATE
+		this.blur()
+	})
+	
+	////////////////
+	//	HELPER FUNCTIONS 
+	////////////////
 
-		var thisQuiz =  quizzes[ get_quiz_id( $(this).closest('.fca_qc_quiz') ) ]
-
+	function fca_qc_process_answer( thisQuiz, $answer ) {
+		
 		//clear endDate to reset timer, otherwise keep counting
 		if( thisQuiz.quiz_settings.timer_mode === 'question' ){
 			$( '#fca_qc_quiz_' + thisQuiz.quiz_id ).data( 'endDate', '' )
@@ -230,8 +262,8 @@ jQuery( document ).ready(function($) {
 		
 		$('.fakehover').removeClass('fakehover')
 
-		var question_id = $(this).closest('#fca_qc_answer_container').data('id')
-		var response_id = $(this).data('id')
+		var question_id = $answer.closest('#fca_qc_answer_container').data('id')
+		var response_id = $answer.data('id')
 
 		var isCorrect = false
 
@@ -253,17 +285,17 @@ jQuery( document ).ready(function($) {
 
 			//STORE RESULT
 
-			if ( $(this).attr('data-question') === thisQuiz.currentAnswer ) {
+			if ( $answer.attr('data-question') === thisQuiz.currentAnswer ) {
 				thisQuiz.score = thisQuiz.score + 1
 				isCorrect = true
 			}
 
 		}
 		var response = {
-			"answer": addQuizImg( $( this ).children('.fca_qc_quiz_answer_img').attr('src') ) + $(this).children('.fca_qc_answer_span').html().replace(svg_square, ''),"answer": addQuizImg( $(this).children('.fca_qc_quiz_answer_img').attr('src') ) + $(this).children('.fca_qc_answer_span').html().replace(svg_square, ''),
+			"answer": addQuizImg( $answer.children('.fca_qc_quiz_answer_img').attr('src') ) + $answer.children('.fca_qc_answer_span').html().replace(svg_square, ''),"answer": addQuizImg( $answer.children('.fca_qc_quiz_answer_img').attr('src') ) + $answer.children('.fca_qc_answer_span').html().replace(svg_square, ''),
 			"isCorrect": isCorrect,
 			"correctAnswer": get_correct_answer_html( thisQuiz ),
-			"question": $(this).siblings('#fca_qc_question').html(),
+			"question": $answer.siblings('#fca_qc_question').html(),
 			"id": question_id,
 			"response": response_id,
 		}
@@ -282,7 +314,7 @@ jQuery( document ).ready(function($) {
 		if ( thisQuiz.quiz_settings.quiz_type === 'pt' ) {
 			//PERSONALITY QUIZZES
 		
-			$.each( $(this).data('results'), function( i, value ){
+			$.each( $answer.data('results'), function( i, value ){
 				 
 				$.each( thisQuiz.quiz_results, function( j, result ){
 					if ( value === result.id ) {
@@ -299,7 +331,7 @@ jQuery( document ).ready(function($) {
 
 		} else if ( thisQuiz.quiz_settings.quiz_type === 'wq' ) {
 			
-			$.each( $(this).data('results'), function( i, value ){
+			$.each( $answer.data('results'), function( i, value ){
 				 
 				$.each( thisQuiz.quiz_results, function( j, result ){
 					if ( value === result.id ) {
@@ -319,7 +351,7 @@ jQuery( document ).ready(function($) {
 		
 			if ( thisQuiz.hideAnswers === 'after' ) {
 
-				$( thisQuiz.selector ).find( '#fca_qc_your_answer' ).html( addQuizImg ( $(this).children('.fca_qc_quiz_answer_img').attr('src')) + $(this).children('.fca_qc_answer_span').html().replace(svg_square,'') )
+				$( thisQuiz.selector ).find( '#fca_qc_your_answer' ).html( addQuizImg ( $answer.children('.fca_qc_quiz_answer_img').attr('src')) + $answer.children('.fca_qc_answer_span').html().replace(svg_square,'') )
 				fca_qc_hide_answers_after( thisQuiz, isCorrect )
 				
 			} else {
@@ -333,11 +365,7 @@ jQuery( document ).ready(function($) {
 		}
 
 
-	})
-	
-	////////////////
-	//	HELPER FUNCTIONS 
-	////////////////	
+	}	
 	
 	// TIMER
 	function fca_qc_push_timeout_question( quiz, id ){
@@ -704,6 +732,9 @@ jQuery( document ).ready(function($) {
 		var newHeight = $(selector).find('#fca_qc_question').outerHeight(true)
 		
 		newHeight += $(selector).find('.fca_qc_quiz_question_img').outerHeight(true)
+		if( $(selector).find('.fca_qc_confirm_button').length > 0 ) {
+			newHeight += 20 + $(selector).find('.fca_qc_confirm_button').outerHeight(true)			
+		}
 		
 		var divCount = 0
 		var elHeight = 0
@@ -1068,7 +1099,9 @@ jQuery( document ).ready(function($) {
 		}
 		
 		var tz = jstz.determine()
-	
+		
+		quiz.doing_ajax = true
+		
 		$.ajax({
 			url: quiz.ajaxurl,
 			type: 'POST',
@@ -1087,8 +1120,7 @@ jQuery( document ).ready(function($) {
 			if ( fcaQcData.debug ) {
 				console.log ( returnedData )
 			}
-
-				
+			quiz.doing_ajax = false				
 		})
 	}
 	
@@ -1192,6 +1224,8 @@ jQuery( document ).ready(function($) {
 			result_id = quiz.score		
 		}
 		
+		quiz.doing_ajax2 = true
+		
 		$.ajax({
 			url: quiz.ajaxurl,
 			type: 'POST',
@@ -1209,7 +1243,8 @@ jQuery( document ).ready(function($) {
 		}).done( function( returnedData ) {
 			if ( fcaQcData.debug ) {
 				console.log ( returnedData )
-			}			
+			}
+			quiz.doing_ajax2 = false
 		})
 	}
 	
@@ -1243,14 +1278,31 @@ jQuery( document ).ready(function($) {
 		
 	}
 	
+	var fcaQcAjaxInterval
 	function show_sharing_and_result_screen ( quiz, result ) {
 
 		send_responses ( quiz, result )
 		
 		if ( quiz.quiz_settings.result_mode === 'redirect' ) {
-			setTimeout(function () {
+			
+			$( quiz.selector ).find( '.fca_qc_wait_container' ).show()
+			
+			if( quiz.hasOwnProperty('doing_ajax') || quiz.hasOwnProperty('doing_ajax2') ) {
+				fcaQcAjaxInterval = setInterval( function() {
+					var hasAjaxProp = quiz.hasOwnProperty('doing_ajax')
+					var hasAjax2Prop = quiz.hasOwnProperty('doing_ajax2')
+					var doingAjax = hasAjaxProp && quiz.doing_ajax
+					var doingAjax2 = hasAjax2Prop && quiz.doing_ajax2
+					
+					if( !doingAjax && !doingAjax2 ) {
+						window.location.href = result.url
+						clearInterval( fcaQcAjaxInterval )
+					}
+				}, 100)
+			} else {
 				window.location.href = result.url
-			}, 1000)
+			}
+			
 		} else {
 			if ( quiz.quiz_settings.restart_button === 'on' ) {
 				$( quiz.selector ).find( '#fca_qc_restart_button' ).on( 'click', function(){
@@ -1288,7 +1340,11 @@ jQuery( document ).ready(function($) {
 	//	UTILITY FUNCTIONS 
 	////////////////
 	
-	function fix_hover ( quiz ) {
+	function fix_hover ( quiz ) { 
+		if( quiz.quiz_settings.hasOwnProperty('confirm_button') && quiz.quiz_settings.confirm_button === 'on' ) {
+			return
+		}
+		
 		//FIX MOBILE TAP TARGET GETTING HOVER
 		$( quiz.selector ).find('.fca_qc_answer_div').hover( function(e) {
 			$(this).addClass('fakehover')
@@ -1297,6 +1353,7 @@ jQuery( document ).ready(function($) {
 			$(this).removeClass('fakehover')
 			$(this).children('span').removeClass('fakehover')
 		})
+		
 	}
 	
 	function show_sharing ( quiz, result ) {

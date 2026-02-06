@@ -8,7 +8,7 @@
 	Author: Fatcat Apps
 	Author URI: https://fatcatapps.com/
 	License: GPLv2
-	Version: 3.0.10
+	Version: 3.1.0
 */
 
 
@@ -22,9 +22,9 @@ if ( !defined ('FCA_QC_PLUGIN_DIR') ) {
 	// DEFINE SOME USEFUL CONSTANTS
 	define( 'FCA_QC_DEBUG', FALSE );
 	if ( FCA_QC_DEBUG ) {
-		define( 'FCA_QC_PLUGIN_VER', '3.0.' . time() );
+		define( 'FCA_QC_PLUGIN_VER', '3.1.' . time() );
 	} else {
-		define( 'FCA_QC_PLUGIN_VER', '3.0.10' );
+		define( 'FCA_QC_PLUGIN_VER', '3.1.0' );
 	}
 	define( 'FCA_QC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 	define( 'FCA_QC_PLUGINS_URL', plugins_url( '', __FILE__ ) );
@@ -88,7 +88,9 @@ if ( !defined ('FCA_QC_PLUGIN_DIR') ) {
 			'share'  => esc_attr__('Share', 'quiz-cat'),
 			'tweet'  =>  esc_attr__('Tweet', 'quiz-cat'),
 			'pin'  =>  esc_attr__('Pin', 'quiz-cat'),
-			'email'  =>  esc_attr__('Email', 'quiz-cat') 
+			'email'  =>  esc_attr__('Email', 'quiz-cat'),
+			'confirm'  =>  esc_attr__('Confirm', 'quiz-cat'),
+			'please_wait'  =>  esc_attr__('Please wait..', 'quiz-cat'),
 		);
 	}
 	

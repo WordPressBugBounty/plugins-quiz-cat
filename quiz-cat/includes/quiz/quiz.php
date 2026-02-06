@@ -152,6 +152,8 @@ function fca_qc_do_quiz( $atts ) {
 					
 				</div>
 			</div>
+			<?php echo fca_qc_do_wait_panel( $post_id, $quiz_text_strings ) ?> 
+			
 			<?php echo fca_qc_do_score_panel( $post_id, $quiz_text_strings ) ?> 
 			
 			<div class='fca_qc_quiz_footer' style='display: none;'>
@@ -165,11 +167,8 @@ function fca_qc_do_quiz( $atts ) {
 			
 			<?php if ( $restart_button ) {
 				$button_text = fca_qc_kses_html( $quiz_text_strings[ 'retake_quiz' ] );
-				echo "<button type='button' class='fca_qc_button' id='fca_qc_restart_button' style='display: none;'>$button_text</button>";
-				
+				echo "<button type='button' class='fca_qc_button' id='fca_qc_restart_button' style='display: none;'>$button_text</button>";				
 			}?>
-
-			
 		</div>
 		<?php
 		
@@ -269,6 +268,7 @@ function fca_qc_maybe_add_custom_styles( $post_id ) {
 				border: <?php echo esc_attr( $answer_border_color ) . ' ' . esc_attr( $answer_border_thickness ) . 'px solid' ?>;
 			}
 
+			<?php echo "#fca_qc_quiz_$post_id" ?>.fca_qc_quiz div.fca_qc_answer_div:hover,
 			<?php echo "#fca_qc_quiz_$post_id" ?>.fca_qc_quiz div.fca_qc_answer_div.fakehover,
 			<?php echo "#fca_qc_quiz_$post_id" ?>.fca_qc_quiz div.fca_qc_answer_div:active {
 				background-color: <?php echo esc_attr( $answer_hover_color ) ?>;
@@ -290,11 +290,18 @@ function fca_qc_set_quiz_text_strings( $post_id ) {
 	
 	$global_quiz_text_strings = fca_qc_global_quiz_text_strings();
 
-	// Check for custom translations from the editor
-	$translations = get_post_meta ( $post_id, 'quiz_cat_translations', true );
-	$text_strings = empty( $translations ) ? $global_quiz_text_strings : $translations;
-	
-	$quiz_text_strings = apply_filters( 'fca_qc_quiz_text', $text_strings );
+	//MERGE EDITOR SAVED STRINGS INTO $global_quiz_text_strings
+	$translations = get_post_meta ( $post_id, 'quiz_cat_translations', true );	
+	if( !empty( $translations ) ) {
+		forEach ( $global_quiz_text_strings as $key => $value ) {
+			if ( !empty ( $translations[$key] ) && $translations[$key] !== false ) {
+				$global_quiz_text_strings[$key] = $translations[$key];
+			}
+		}
+		
+	}
+		
+	$filtered_text_strings = apply_filters( 'fca_qc_quiz_text', $global_quiz_text_strings );
 
 	// Then check for shortcode strings which overwrite translations
 	$shortcode_text_strings = array (
@@ -322,16 +329,18 @@ function fca_qc_set_quiz_text_strings( $post_id ) {
 		'tweet'  => empty( $atts['tweet'] ) ? false : $atts['tweet'],
 		'pin'  => empty( $atts['pin'] ) ? false : $atts['pin'],
 		'email'  =>  empty( $atts['email'] ) ? false : $atts['email'], 
+		'confirm'  =>  empty( $atts['confirm'] ) ? false : $atts['confirm'], 
+		'please_wait'  =>  empty( $atts['please_wait'] ) ? false : $atts['please_wait'], 
 	
 	);
 	
-	forEach ( $quiz_text_strings as $key => $value ) {
+	forEach ( $filtered_text_strings as $key => $value ) {
 		if ( !empty ( $shortcode_text_strings[$key] ) && $shortcode_text_strings[$key] !== false ) {
-			$quiz_text_strings[$key] = $shortcode_text_strings[$key];
+			$filtered_text_strings[$key] = $shortcode_text_strings[$key];
 		}
 	}
 
-	return $quiz_text_strings;
+	return $filtered_text_strings;
 	
 }
 
@@ -340,6 +349,8 @@ function fca_qc_do_question_panel( $post_id, $quiz_text_strings ) {
 	$max_questions = 4;
 	
 	$questions = get_post_meta ( $post_id, 'quiz_cat_questions', true );
+	$settings = get_post_meta ( $post_id, 'quiz_cat_settings', true );
+	$confirm_button = empty ( $settings['confirm_button'] ) ? '' : true;
 	
 	forEach ( $questions as $question ) {
 		if ( count ( $question['answers'] ) > $max_questions ) {
@@ -356,6 +367,10 @@ function fca_qc_do_question_panel( $post_id, $quiz_text_strings ) {
 			$html .= "<img class='fca_qc_quiz_answer_img' src=''>";
 			$html .= "<span class='fca_qc_answer_span'></span></div>";
 
+		}
+		
+		if( $confirm_button ){
+			$html .= "<button type='button' class='fca_qc_button fca_qc_confirm_button'>" . fca_qc_kses_html( $quiz_text_strings[ 'confirm' ] ) . "</button>";
 		}
 		
 	$html .= "</div>";
@@ -387,6 +402,17 @@ function fca_qc_do_answer_panel( $quiz_text_strings, $post_id ) {
 		$html .= "<p style='color: " . $rw_font_color . "' id='fca_qc_correct_answer_p' class='fca_qc_back_response'>" . $quiz_text_strings['correct_answer'] . " <span id='fca_qc_correct_answer'></span></p>";
 		$html .= "<p style='color: " . $rw_font_color . "' id='fca_qc_hint_p' class='fca_qc_back_response'></p>";
 		$html .= "<button type='button' class='fca_qc_next_question'>" . $quiz_text_strings['next'] . "</button>";
+	$html .= "</div>";
+	
+	return $html;
+
+}
+
+function fca_qc_do_wait_panel( $post_id, $quiz_text_strings ) {
+	
+	$html = "<div class='fca_qc_wait_container' style='display:none;'>";
+		$html .= "<p>" . $quiz_text_strings['please_wait'] ."</p>";
+		$html .= "<span class='fca_qc_spin'>↺</span>";
 	$html .= "</div>";
 	
 	return $html;

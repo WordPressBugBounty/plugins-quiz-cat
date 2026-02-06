@@ -107,7 +107,7 @@ div.fca_qc_quiz svg.fca_qc_rectancle {
 
 div.fca_qc_quiz svg.fca_qc_rectancle rect { 
 	fill: #fff;  
-	transition: all 500ms;
+	transition: all 0.2s;
 }
 
 div.fca_qc_quiz .fca_qc_answer_span.fakehover svg.fca_qc_rectancle rect { 
@@ -155,6 +155,7 @@ div.fca_qc_quiz button.fca_qc_button {
 	border: none;
 	cursor: pointer;
 	height: auto;
+	transition: background-color 0.2s;
 }
 
 div.fca_qc_quiz button:hover {
@@ -172,6 +173,7 @@ div.fca_qc_quiz button.fca_qc_next_question {
 	font-size: 20px;
 	cursor: pointer;
 	height: auto;
+	transition: background-color 0.2s;
 }
 
 div.fca_qc_quiz button.fca_qc_next_question:hover {
@@ -194,6 +196,7 @@ div.fca_qc_quiz div.fca_qc_answer_div {
 	cursor: pointer;
 	color: #151515;
 	padding: 15px 15px 15px 50px;
+	transition: background-color 0.2s;
 }
 
 div.fca_qc_quiz div.fca_qc_answer_div.fca-qc-twoup {
@@ -442,9 +445,27 @@ div.fca_qc_quiz p.fca_qc_back_response {
 
 /* OPTINS */
 div.fca_qc_quiz p.fca_qc_email_headline {
-	font-size: 25px;
+	font-size: 24px;
 	font-family: sans-serif;
 	font-weight: bold;
+	margin-bottom: 24px;
+}
+
+div.fca_qc_quiz input.fca_qc_optin_input {
+	font-size: 16px;
+	padding: 12px 14px;
+	border-radius: 8px;
+	background-color: white;
+	font-family: sans-serif;
+	border: 1px solid #d1d5db;
+	outline: none;
+	transition: border-color 0.2s, box-shadow 0.2s;
+	width: 100%;
+}
+
+div.fca_qc_quiz input.fca_qc_optin_input:focus {
+	border-color: #2563eb;
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 }
 
 div.fca_qc_quiz button.fca_qc_button.fca_qc_submit_email_button {
@@ -452,28 +473,20 @@ div.fca_qc_quiz button.fca_qc_button.fca_qc_submit_email_button {
 }
 
 div.fca_qc_quiz button.fca_qc_skip_email_button {
-	background-color: #aaa;
-	margin-top: 15px;
-	font-size: 0.8em;
+	font-size: 16px;
+	font-weight: normal;	
+	background-color: rgba(0, 0, 0, 0);
+	margin-top: 12px;
 	border: none;
-	color: black;
-	padding: 8px 12px;
+	color: #374151;
+	padding: 12px;
 	border-radius: 8px;
 	cursor: pointer;
+	transition: background-color 0.2s;
 }
 
-div.fca_qc_quiz input.fca_qc_optin_input {
-	background-color: white;
-	font-family: sans-serif;
-	border: 1px solid #ccc;
-	border-radius: 5px;
-	height: 37px;
-	-webkit-transition: All 0.5s ease-in-out;
-	-moz-transition: All 0.5s ease-in-out;
-	-o-transition: All 0.5s ease-in-out;
-	-ms-transition: All 0.5s ease-in-out;
-	transition: All 0.5s ease-in-out;
-	width: 100%;
+div.fca_qc_quiz button.fca_qc_skip_email_button:hover {
+	background-color: #e5e7eb;
 }
 
 div.fca_qc_optin_container p  {
@@ -569,6 +582,39 @@ div.fca_qc_quiz input.fca_qc_optin_input.fca_qc_invalid {
 /* A HIDDEN SELECTOR TO TELL US IF MEDIA QUERIES ARE ACTIVE */
 div.fca_qc_quiz span.fca_qc_mobile_check {
 	display: none;
+}
+
+/* SPINNER CSS */
+.fca_qc_spin {
+	display: inline-block;
+    -webkit-animation-name: spinnerRotate;
+    -webkit-animation-duration: 0.8s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+    -moz-animation-name: spinnerRotate;
+    -moz-animation-duration: 0.8s;
+    -moz-animation-iteration-count: infinite;
+    -moz-animation-timing-function: linear;
+    -ms-animation-name: spinnerRotate;
+    -ms-animation-duration: 0.8s;
+    -ms-animation-iteration-count: infinite;
+    -ms-animation-timing-function: linear;
+}
+
+@-webkit-keyframes spinnerRotate
+{
+    from{-webkit-transform:rotate(0deg);}
+    to{-webkit-transform:rotate(-360deg);}
+}
+@-moz-keyframes spinnerRotate
+{
+    from{-moz-transform:rotate(0deg);}
+    to{-moz-transform:rotate(-360deg);}
+}
+@-ms-keyframes spinnerRotate
+{
+    from{-ms-transform:rotate(0deg);}
+    to{-ms-transform:rotate(-360deg);}
 }
 
 @media (max-width: 600px) {

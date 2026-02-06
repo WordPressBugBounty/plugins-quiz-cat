@@ -158,7 +158,10 @@ jQuery(document).ready(function($){
 	// ACTIVATE TOOLTIPS
 	jQuery.widget.bridge( 'jQueryUITooltipFCAQC', jQuery.ui.tooltip )
 	$('.fca_qc_tooltip').jQueryUITooltipFCAQC({
-		position: { my: 'left', at: 'right+2' }
+		position: { my: 'left', at: 'right+2' },
+		content: function() {
+			return $(this).prop('title')
+		}
 	})
 	
 	//NAVIGATION TABS	
@@ -983,7 +986,6 @@ function fca_qc_attach_image_upload_handlers() {
 		$( this.parentNode ).siblings('.fca_qc_image').attr('src', '' )
 		$( this.parentNode ).siblings('.fca_qc_quiz_image_upload_btn').show()
 		$( this.parentNode ).siblings('#fca_qc_quiz_description_image_src').val('')
-		$( this ).hide()
 		$( this ).siblings( '.fca_qc_quiz_image_upload_btn' ).hide()
 		
 	})

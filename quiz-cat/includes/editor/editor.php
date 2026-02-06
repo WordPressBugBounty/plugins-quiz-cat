@@ -218,10 +218,12 @@ function fca_qc_render_questions_meta_box( $post ) {
 function fca_qc_render_question_settings_meta_box( $post ) {
 	
 	$settings = get_post_meta ( $post->ID, 'quiz_cat_settings', true );
+	$settings = empty( $settings ) ? array( 'confirm_button' => 'on' ) : $settings;
 	$show_explanations = empty ( $settings['explanations'] ) ? '' : true;
 	$shuffle_questions = empty ( $settings['shuffle_questions'] ) ? '' : true;
 	$fixed_answers = empty ( $settings['fixed_answers'] ) ? '' : true;
-	$hide_answers = empty ( $settings['hide_answers'] ) ? '' : true;
+	$hide_answers = empty ( $settings['hide_answers'] ) ? '' : true;	
+	$confirm_button = empty ( $settings['confirm_button'] ) ? '' : true;
 	
 	ob_start(); ?>
 	<table class='fca_qc_setting_table' >
@@ -229,6 +231,17 @@ function fca_qc_render_question_settings_meta_box( $post ) {
 	<?php
 	if ( function_exists ('fca_qc_save_quiz_settings_premium' ) ) { ?>
 		<?php fca_qc_answer_mode_toggle( $settings ) ?>			
+		<tr>
+			<th>
+				<label class='fca_qc_admin_label' for='fca_qc_show_confirm_button'><?php echo esc_attr__('Show "Confirm Answer" Button', 'quiz-cat') . fca_qc_tooltip( __('Adds a "Confirm" button to allow users to confirm their selected answer. Disable to automatically submit an answer when selected.', 'quiz-cat' ) ) ?></label>
+			</th>
+			<td>
+				<div class='onoffswitch'>
+					<input type='checkbox' class='onoffswitch-checkbox' id='fca_qc_show_confirm_button' style='display:none;' name='fca_qc_show_confirm_button' <?php checked( $confirm_button ) ?> ></input>		
+				<label class='onoffswitch-label' for='fca_qc_show_confirm_button'><span class='onoffswitch-inner'><span class='onoffswitch-switch'></span></span></label>
+				</div>
+			</td>
+		</tr>
 		<tr id='fca_qc_hints_toggle_tr'>
 			<th>
 				<label class='fca_qc_admin_label' for='fca_qc_explanations'><?php echo esc_attr__('Enable Explanations', 'quiz-cat') . fca_qc_tooltip( __('Show an explanation or reasoning why an answer is correct. This adds a new input on each question', 'quiz-cat') ) ?></label>
@@ -261,8 +274,19 @@ function fca_qc_render_question_settings_meta_box( $post ) {
 				<label class='onoffswitch-label' for='fca_qc_fixed_answers_order'><span class='onoffswitch-inner'><span class='onoffswitch-switch'></span></span></label>
 				</div>
 			</td>
-		</tr>
+		</tr>		
 	<?php } else { ?>
+		<tr>
+			<th>
+				<label class='fca_qc_admin_label' for='fca_qc_show_confirm_button'><?php echo esc_attr__('Show "Confirm Answer" Button', 'quiz-cat') . fca_qc_tooltip( __('Adds a "Confirm" button to allow users to confirm their selected answer. Disable to automatically submit an answer when selected.', 'quiz-cat' ) ) ?></label>
+			</th>
+			<td>
+				<div class='onoffswitch'>
+					<input type='checkbox' class='onoffswitch-checkbox' id='fca_qc_show_confirm_button' style='display:none;' name='fca_qc_show_confirm_button' <?php checked( $confirm_button ) ?> ></input>		
+				<label class='onoffswitch-label' for='fca_qc_show_confirm_button'><span class='onoffswitch-inner'><span class='onoffswitch-switch'></span></span></label>
+				</div>
+			</td>
+		</tr>	
 		<tr>
 			<th>
 				<label class='fca_qc_admin_label' for='fca_qc_hide_answers_until_end'><?php esc_attr_e('Hide Answers Until End of Quiz', 'quiz-cat') ?></label>
@@ -662,7 +686,7 @@ function fca_qc_render_quiz_settings_meta_box( $post ) {
 				<label class='onoffswitch-label' for='fca_qc_disable_scroll'><span class='onoffswitch-inner'><span class='onoffswitch-switch'></span></span></label>
 				</div>
 			</td>
-		</tr>		
+		</tr>
 	</table>
 <?php 
 	echo ob_get_clean();
@@ -727,6 +751,7 @@ function fca_qc_save_quiz_settings( $post_id ) {
 		'fca_qc_result_mode'			=> 'result_mode',
 		'fca_qc_quiz_type'				=> 'quiz_type',
 		'fca_qc_disable_scroll'			=> 'disable_scroll',
+		'fca_qc_show_confirm_button'	=> 'confirm_button',
 	);
 	
 	forEach ( $fields as $key => $value ) {

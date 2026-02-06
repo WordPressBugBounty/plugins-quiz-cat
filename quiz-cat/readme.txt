@@ -5,10 +5,10 @@ Tags: quiz, quizzes, viral quiz, buzzfeed quiz, trivia quiz
 Author URI: https://fatcatapps.com/
 Plugin URI: https://fatcatapps.com/quizcat
 Requires at least: 4.0
-Tested up to: 6.8
+Tested up to: 6.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 3.0.10
+Stable tag: 3.1.0
 
 Quiz Cat Lets You Create Beautiful Viral BuzzFeed-style Quizzes That Drive Social Shares & User Engagement. Set It Up In 2 Minutes.
 
@@ -169,6 +169,10 @@ Our full privacy policy is available here: [https://fatcatapps.com/legal/privacy
 
 
 == Changelog ==
+
+= Quiz Cat 3.1.0 =
+* Added "confirm answer" button option
+* Fix "remove image" button being hidden in some cases
 
 = Quiz Cat 3.0.10 =
 * Changed 'global_quiz_text_strings' to function instead of global to improve compatibility
