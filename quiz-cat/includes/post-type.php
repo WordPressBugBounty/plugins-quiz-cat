@@ -75,6 +75,19 @@ function fca_qc_post_updated_messages( $messages ){
 	return $messages;
 }
 add_filter('post_updated_messages', 'fca_qc_post_updated_messages' );
+
+function fca_qc_admin_body_class( $classes ) {
+	global $wp_version;
+	$post_type = get_post_type();
+	
+	if ( $post_type === 'fca_qc_quiz' && version_compare( $wp_version, '7', '<' ) ) {
+		$classes .= ' fca-qc-wp-less-than-7';
+	}
+	
+    return $classes;
+}
+add_filter( 'admin_body_class', 'fca_qc_admin_body_class' );
+
 function fca_qc_remove_screen_options_tab ( $show_screen, $screen ) {
 	if ( $screen->id == 'fca_qc_quiz' ) {
 		return false;

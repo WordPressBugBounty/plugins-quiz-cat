@@ -208,7 +208,7 @@ function fca_qc_render_questions_meta_box( $post ) {
 } ?>
 </div>
 <button type='button' title='<?php esc_attr_e( 'Add a new Question', 'quiz-cat' ) ?>' class='fca_qc_add_question_btn button-secondary fca_qc_add_btn' >
-<span class='dashicons dashicons-plus' style='vertical-align: text-top;'></span><?php esc_attr_e( 'New Question', 'quiz-cat' ) ?></button>
+<span class='dashicons dashicons-plus'></span><?php esc_attr_e( 'New Question', 'quiz-cat' ) ?></button>
 <?php
 	echo ob_get_clean();
 	
@@ -371,7 +371,7 @@ function fca_qc_render_question_modal() {
 		</table>
 		<div id='fca-qc-modal-answers'></div>
 		<button type='button' title='<?= esc_attr_e( 'New Answer', 'quiz-cat') ?>' class='button-secondary fca_qc_add_btn fca_qc_add_answer_btn' >
-		<span class='dashicons dashicons-plus' style='vertical-align: text-top;'></span><?= esc_attr_e('New Answer', 'quiz-cat') ?></button>
+		<span class='dashicons dashicons-plus'></span><?= esc_attr_e('New Answer', 'quiz-cat') ?></button>
 	</div>	
 </div><?php 
 	return ob_get_clean();
@@ -464,7 +464,7 @@ function fca_qc_render_results_meta_box( $post ) {
 } ?>
 </div>
 <button type='button' title='<?= esc_attr_e( 'New Result', 'quiz-cat') ?>' class='button-secondary fca_qc_add_btn fca_qc_add_result_btn' >
-<span class='dashicons dashicons-plus' style='vertical-align: text-top;'></span><?= esc_attr_e('New Result', 'quiz-cat') ?></button>
+<span class='dashicons dashicons-plus'></span><?= esc_attr_e('New Result', 'quiz-cat') ?></button>
 <?php 
 	echo ob_get_clean();
 }

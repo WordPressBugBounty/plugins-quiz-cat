@@ -99,8 +99,8 @@ function fca_qc_add_wysiwyg ( $value = '', $name = '' ) {
 				<button type="button" data-wysihtml5-command="unlink" class="fca-wysiwyg-link-group fca-nav-rounded-right"><span class="dashicons dashicons-editor-unlink"></span></button>
 				<div class="fca-wysiwyg-url-dialog" data-wysihtml5-dialog="createLink" style="display: none">
 					<input data-wysihtml5-dialog-field="href" value="http://">
-					<a class="button button-secondary" data-wysihtml5-dialog-action="cancel"><?php esc_attr_e('Cancel', 'quiz-cat') ?></a>
-					<a class="button button-primary" data-wysihtml5-dialog-action="save"><?php esc_attr_e('OK', 'quiz-cat') ?></a>
+					<a class="button button-secondary button-small" data-wysihtml5-dialog-action="cancel"><?php esc_attr_e('Cancel', 'quiz-cat') ?></a>
+					<a class="button button-primary button-small" data-wysihtml5-dialog-action="save"><?php esc_attr_e('OK', 'quiz-cat') ?></a>
 				</div>
 			</div>			
 			<button class="fca-wysiwyg-view-html action" type="button" data-wysihtml5-action="change_view">HTML</button>	

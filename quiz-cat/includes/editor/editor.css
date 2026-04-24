@@ -228,17 +228,17 @@
 
 }
 .radio-toggle label:first-child {
-	border-top-left-radius: 10px;
-	border-bottom-left-radius: 10px;
+	border-top-left-radius: 2px;
+	border-bottom-left-radius: 2px;
 	border-right: none;
 }
 .radio-toggle label:last-child {
-	border-top-right-radius: 10px;
-	border-bottom-right-radius: 10px;
+	border-top-right-radius: 2px;
+	border-bottom-right-radius: 2px;
 	border-left: none;
 }
 .radio-toggle label.selected {
-	background-color: #0085ba;
+	background-color: var(--wp-admin-theme-color);
 	color: white;
 
 }
@@ -312,12 +312,14 @@ button.fca-wysiwyg-view-html {
 	border: solid 1px #d9d9d9;
 	border-radius: 0px 2px 2px 0px;
 }
-.fca-wysiwyg-url-dialog {
-	display: inline-block;
-	margin-left: 5px;
+
+.fca-qc-wp-less-than-7 .fca_qc_add_btn .dashicons {
+	vertical-align: text-top;
+	margin-top: 0;
 }
-.fca-wysiwyg-url-dialog a.button {
-	margin: 2px 0 0 5px;
+
+.fca_qc_add_btn .dashicons {
+	margin-top: 2px;
 }
 
 /* END WYSIWYG */
@@ -628,7 +630,7 @@ img.fca_qc_image:hover + div.fca_qc_image_hover_controls {
 .onoffswitch-inner:before {
 	content: attr(data-content-on);
 	padding-left: 10px;
-	background-color: #0085ba; color: #FFFFFF;
+	background-color: var(--wp-admin-theme-color); color: #FFFFFF;
 }
 .onoffswitch-inner:after {
 	content: attr(data-content-off);
