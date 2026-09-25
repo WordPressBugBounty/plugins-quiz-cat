@@ -5,10 +5,10 @@ Tags: quiz, quizzes, viral quiz, buzzfeed quiz, trivia quiz
 Author URI: https://fatcatapps.com/
 Plugin URI: https://fatcatapps.com/quizcat
 Requires at least: 4.0
-Tested up to: 7.0
+Tested up to: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 3.1.1
+Stable tag: 3.2.0
 
 Quiz Cat Lets You Create Beautiful Viral BuzzFeed-style Quizzes That Drive Social Shares & User Engagement. Set It Up In 2 Minutes.
 
@@ -69,9 +69,11 @@ Quiz Cat Premium features include:
 
 * Personality quizzes
 * Weighted quizzes
+* Timed quizzes or questions
 * Email capture after quiz completion
 * Integration with popular email marketing tools
 * Zapier integration
+* Webhook integration
 * Lead segmentation via tags & merge fields
 * Redirect to URL after quiz completion
 * Shuffle quiz questions
@@ -169,6 +171,12 @@ Our full privacy policy is available here: [https://fatcatapps.com/legal/privacy
 
 
 == Changelog ==
+
+= Quiz Cat 3.2.0 =
+* Redesigned quiz front end
+* Added image alt tag support
+* Added date filter and search to quiz list
+* Fix backslashes gettng stripped from inputs
 
 = Quiz Cat 3.1.1 =
 * UI Fixes/Updates to prepare for WordPress 7.0 admin resdesign

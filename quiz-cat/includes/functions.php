@@ -24,14 +24,21 @@ function fca_qc_info_span( $text = '', $link = '' ) {
 }
 
 //OUTPUTS HTML FOR IMAGE ADD/CHANGE
-function fca_qc_add_image_input( $img = '', $name = '', $id = '' ) {
+function fca_qc_add_image_input( $img = '', $name = '', $id = '', $alt = '' ) {
 	$id_attr = empty( $id ) ? '' : "id='" . esc_attr( $id ) . "'";
 	ob_start(); ?>	
-	<div class="fca_qc_image_input_div">
+	<div class="fca_qc_image_input_div fca_qc_image_input_div_<?php echo esc_attr( $name ); ?>" >
 		<?php echo fca_qc_input( $name, '', $img, 'hidden', $id_attr ) ?>
 		<a href='#' 
 			title='<?php esc_attr_e('Adds an image (optional).  For best results, use images at least 250px wide and use the same image resolution for each image you add to an answer.', 'quiz-cat') ?>' 
 			class='fca_qc_quiz_image_upload_btn'><?php esc_attr_e('Add Image', 'quiz-cat') ?></a>
+		<?php 
+		if( $name === 'quiz_description_image_src' ) {
+			echo fca_qc_input( 'description_image_alt', '', $alt, 'hidden' );
+		} else {
+			echo fca_qc_input( 'alt', '', $alt, 'hidden' );
+		}			
+		?>
 		<img class='fca_qc_image' style='max-width: 252px' src='<?php echo esc_attr( $img )?>'>
 			
 		<div class='fca_qc_image_hover_controls'>
@@ -263,42 +270,67 @@ function fca_qc_show_gdpr_checkbox(){
 
 function fca_qc_clone_quiz( $to_duplicate ) {
 			
+	global $wpdb;
 	$post = get_post( $to_duplicate );	
-		
-	if (isset( $post ) && $post != null ) {
-		
-		global $wpdb;
-		
-		$args = array(
-			'post_content'   => $post->post_content,
-			'post_name'      => '',
-			'post_status'    => 'publish',
-			'post_title'     => $post->post_title . ' copy',
-			'post_type'      => $post->post_type,
-		);
-		$new_post_id = wp_insert_post( $args );
-
-		$post_meta_infos = $wpdb->get_results( $wpdb->prepare("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id = %d", $to_duplicate ) );
-		
-		if ( count( $post_meta_infos ) ) {
-			
-			$sql_query = "INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) ";
-			
-			foreach ($post_meta_infos as $meta_info) {
-				
-				$meta_key = $meta_info->meta_key;
-				if ( $meta_key == '_wp_old_slug' ) continue;
-				$meta_value = addslashes($meta_info->meta_value);
-				$sql_query_sel[]= "SELECT $new_post_id, '$meta_key', '$meta_value'";
-			}
-			
-			$sql_query.= implode(" UNION ALL ", $sql_query_sel);
-			
-			$wpdb->query( $sql_query );
-		}
-		
-		echo "<script>window.location='" . admin_url( 'post.php' ) . "?post=$new_post_id&action=edit" . "'</script>";
-		exit;		
+	
+	if ( empty( $post ) ) {
+		return;
+	}	
+	
+	$new_post_id = wp_insert_post( array(
+		'post_content'   => $post->post_content,
+		'post_name'      => '',
+		'post_status'    => 'publish',
+		'post_title'     => $post->post_title . ' copy',
+		'post_type'      => $post->post_type,
+	) );
+	
+	if ( is_wp_error( $new_post_id ) || empty($new_post_id) ) {
+		return;
 	}
 
+	$post_meta_infos = $wpdb->get_results( $wpdb->prepare(
+		"SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id = %d", $to_duplicate
+	) );
+
+	$rows   = array();
+	$values = array();
+
+	foreach ( $post_meta_infos as $meta_info ) {
+		if ( $meta_info->meta_key === '_wp_old_slug' ) continue;
+
+		$rows[]   = '(%d, %s, %s)';
+		$values[] = $new_post_id;
+		$values[] = $meta_info->meta_key;
+		$values[] = $meta_info->meta_value;
+	}
+
+	if ( $rows ) {
+		$wpdb->query( $wpdb->prepare(
+			"INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) VALUES " . implode( ', ', $rows ),
+			$values
+		) );
+	}
+	
+	echo "<script>window.location='" . admin_url( 'post.php' ) . "?post=$new_post_id&action=edit" . "'</script>";
+	exit;
+
+}
+
+function fca_qc_hex_to_rgb( $hex ) {
+    $hex = ltrim( $hex, '#' );
+
+    if ( strlen( $hex ) === 3 ) {
+        $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+    }
+
+    if ( strlen( $hex ) !== 6 ) {
+        return '0, 0, 0'; // fallback for bad input
+    }
+
+    $r = hexdec( substr( $hex, 0, 2 ) );
+    $g = hexdec( substr( $hex, 2, 2 ) );
+    $b = hexdec( substr( $hex, 4, 2 ) );
+
+    return "$r, $g, $b";
 }

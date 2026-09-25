@@ -160,33 +160,32 @@ function fca_qc_render_post_list(){
 		
 	$modal_style = $add_new ? 'style="display:block;"' : ''
 	?>
-
-<form method="post">
-	<div class="wrap">
-		
-		<h2>Quiz Cat <a href="#" id="fca-qc-add-new-button" class="page-title-action"><?php esc_html_e( 'Add New', 'quiz-cat' ) ?></a></h2>
-		
-		<?php if ( FCA_QC_PLUGIN_PACKAGE === 'Free' ) { ?>
-			<p><?php esc_html_e( 'Problems, Suggestions?', 'quiz-cat' ) ?> 
-			<a href="https://wordpress.org/support/plugin/quiz-cat" target="_blank"><?php esc_html_e( 'Visit the support forum', 'quiz-cat' ) ?></a> | 
-			<a href="https://fatcatapps.com/article-categories/quiz-cat/" target="_blank"><?php esc_html_e( 'Knowledge Base', 'quiz-cat' ) ?></a> | 
-			<a href="https://youtu.be/CQe3VsX_Xag" target="_blank"><?php esc_html_e( 'Watch Demo', 'quiz-cat' ) ?></a> |
-			<a href="http://fatcatapps.com/quizcat/" target="_blank"><?php esc_html_e( 'Get Quiz Cat Premium', 'quiz-cat' ) ?></a>
-			</p>
-		<?php } else { ?>
-			<p><?php esc_html_e( 'Problems, Suggestions?', 'quiz-cat' ) ?> 
-			<a href="https://fatcatapps.com/support/" target="_blank"><?php esc_html_e( 'Get support', 'quiz-cat' ) ?></a> | 
-			<a href="https://fatcatapps.com/article-categories/quiz-cat/" target="_blank"><?php esc_html_e( 'Knowledge Base', 'quiz-cat' ) ?></a> | 
-			<a href="https://youtu.be/CQe3VsX_Xag" target="_blank"><?php esc_html_e( 'Watch Demo', 'quiz-cat' ) ?></a>
-			</p>
-		<?php } ?>
-			<?php
-			$listTable = new QuizCat_List_Table();
-			$listTable->prepare_items();
-			$listTable->display();
-			?>
-	</div>
-</form>
+<div class="wrap">		
+	<h2>Quiz Cat <a href="#" id="fca-qc-add-new-button" class="page-title-action"><?php esc_html_e( 'Add New', 'quiz-cat' ) ?></a></h2>		
+	<?php if ( FCA_QC_PLUGIN_PACKAGE === 'Free' ) { ?>
+		<p><?php esc_html_e( 'Problems, Suggestions?', 'quiz-cat' ) ?> 
+		<a href="https://wordpress.org/support/plugin/quiz-cat" target="_blank"><?php esc_html_e( 'Visit the support forum', 'quiz-cat' ) ?></a> | 
+		<a href="https://fatcatapps.com/article-categories/quiz-cat/" target="_blank"><?php esc_html_e( 'Knowledge Base', 'quiz-cat' ) ?></a> | 
+		<a href="https://youtu.be/CQe3VsX_Xag" target="_blank"><?php esc_html_e( 'Watch Demo', 'quiz-cat' ) ?></a> |
+		<a href="http://fatcatapps.com/quizcat/" target="_blank"><?php esc_html_e( 'Get Quiz Cat Premium', 'quiz-cat' ) ?></a>
+		</p>
+	<?php } else { ?>
+		<p><?php esc_html_e( 'Problems, Suggestions?', 'quiz-cat' ) ?> 
+		<a href="https://fatcatapps.com/support/" target="_blank"><?php esc_html_e( 'Get support', 'quiz-cat' ) ?></a> | 
+		<a href="https://fatcatapps.com/article-categories/quiz-cat/" target="_blank"><?php esc_html_e( 'Knowledge Base', 'quiz-cat' ) ?></a> | 
+		<a href="https://youtu.be/CQe3VsX_Xag" target="_blank"><?php esc_html_e( 'Watch Demo', 'quiz-cat' ) ?></a>
+		</p>
+	<?php } ?>
+	<form method="GET" class="fca-qc-list-table">
+		<input type="hidden" name="post_type" value="fca_qc_quiz" />
+		<input type="hidden" name="page" value="fca-qc-list" />
+		<?php
+		$listTable = new QuizCat_List_Table();
+		$listTable->prepare_items();
+		$listTable->display();
+		?>
+	</form>
+</div>
 <div id='fca-quiz-select' class="fca-qc-modal" <?= $modal_style?> >
 	<div class="fca-qc-modal-inner">
 		<span href="#" class="fca-qc-modal-close"><?php esc_html_e( 'Close', 'quiz-cat' ) ?></span>

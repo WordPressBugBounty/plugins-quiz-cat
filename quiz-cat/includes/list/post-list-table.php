@@ -155,7 +155,10 @@ class QuizCat_List_Table extends WP_List_Table {
 	function prepare_items() {
 
 		$post_status = empty( $_GET['post_status'] ) ? '' : sanitize_text_field( $_GET['post_status'] );
-
+		$search = empty( $_REQUEST['s'] ) ? '' : sanitize_text_field( wp_unslash( $_REQUEST['s'] ) );
+		$quiz_type = empty( $_REQUEST['quiz_type'] ) ? '' : sanitize_text_field( wp_unslash( $_REQUEST['quiz_type'] ) );
+		$month = empty( $_REQUEST['m'] ) ? '' : sanitize_text_field( wp_unslash( $_REQUEST['m'] ) );
+	
 		$per_page = 20;
 
 		$columns  = $this->get_columns();
@@ -170,8 +173,25 @@ class QuizCat_List_Table extends WP_List_Table {
 			'post_type'      => 'fca_qc_quiz',			
 			'posts_per_page' => '-1'
         );
+		
+		if ( !empty( $search ) ) {
+			$args['s'] = $search;
+		}
+		
+		if ( !empty( $month ) && strlen( $month ) === 6 ) {
+			$args['year']     = (int) substr( $month, 0, 4 );
+			$args['monthnum'] = (int) substr( $month, 4, 2 );
+		}
 
 		$data = get_posts( $args );
+		
+		if ( !empty( $quiz_type ) ) {
+			$data = array_filter( $data, function( $post ) use ( $quiz_type ) {
+					$settings = get_post_meta( $post->ID, 'quiz_cat_settings', true );
+					return !empty( $settings['quiz_type'] ) && $settings['quiz_type'] === $quiz_type;
+				}
+			);
+		}
 
 		$current_page = $this->get_pagenum();
 
@@ -199,5 +219,76 @@ class QuizCat_List_Table extends WP_List_Table {
 		$result = strcmp( $a[ $orderby ], $b[ $orderby ] );
 
 		return ( 'asc' === $order ) ? $result : - $result;
+	}
+	
+	protected function extra_tablenav( $which ) {
+
+		if ( 'top' !== $which ) {
+			return;
+		}
+
+		global $wpdb;
+
+		$current_type = empty( $_GET['quiz_type'] )	? '' : sanitize_text_field( wp_unslash( $_GET['quiz_type'] ) );
+		$current_month = empty( $_GET['m'] ) ? '' : sanitize_text_field( wp_unslash( $_GET['m'] ) );
+				
+		$months = $wpdb->get_results(
+			$wpdb->prepare(
+				"
+				SELECT DISTINCT YEAR(post_date) AS year, MONTH(post_date) AS month
+				FROM {$wpdb->posts}
+				WHERE post_type = %s
+				ORDER BY post_date DESC
+				",
+				'fca_qc_quiz'
+			)
+		);
+
+		?>
+		<div class="alignleft actions">
+			<select name="m">
+				<option value=""><?php esc_html_e( 'All dates' ); ?></option>
+				<?php foreach ( $months as $month ) {
+
+						$value = sprintf(
+							'%04d%02d',
+							$month->year,
+							$month->month
+						);
+
+						$label = date_i18n(
+							'F Y',
+							mktime( 0, 0, 0, $month->month, 1, $month->year )
+						);
+						?>
+						<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $current_month, $value ); ?>>
+							<?php echo esc_html( $label ); ?>
+						</option>
+				<?php } ?>
+			</select>
+			<select name="quiz_type">
+				<option value=""><?php esc_html_e( 'All Quiz Types', 'quiz-cat' ); ?></option>
+				<option value="pt" <?php selected( $current_type, 'pt' ); ?>>
+					<?php esc_html_e( 'Personality', 'quiz-cat' ); ?>
+				</option>
+				<option value="mc" <?php selected( $current_type, 'mc' ); ?>>
+					<?php esc_html_e( 'Multiple Choice', 'quiz-cat' ); ?>
+				</option>
+				<option value="wq" <?php selected( $current_type, 'wq' ); ?>>
+					<?php esc_html_e( 'Weighted Answers', 'quiz-cat' ); ?>
+				</option>
+			</select>
+
+			<?php
+			submit_button(
+				__( 'Filter', 'quiz-cat' ),
+				'secondary',
+				'filter_action',
+				false
+			);			
+			?>
+		</div>
+		<?php $this->search_box( __( 'Search Quizzes', 'quiz-cat' ), 'quiz-search' ); ?>		
+	<?php
 	}
 }

@@ -81,6 +81,13 @@
 	display: inline-block;
 }
 
+.fca-qc-list-table .tablenav.top .tablenav-pages {
+	display: none;
+}
+
+.fca-qc-list-table .tablenav.top .search-box {
+	margin-top: 0;
+}
 
 .fca-qc-modal-list .fca-qc-modal-list-group span.dashicons{
 	position: absolute;

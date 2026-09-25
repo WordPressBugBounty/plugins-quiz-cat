@@ -1,52 +1,5 @@
 <?php
 
-
-// ADD OUR RECOMMENDED MENU
-function fca_qc_featured_plugins_menu() {
-
-	add_submenu_page( 'edit.php?post_type=fca_qc_quiz', __('Featured Plugins', 'quiz-cat'), __('Featured Plugins', 'quiz-cat'), 'manage_options', 'fca-featured-plugins', 'fca_qc_render_featured_plugins' );
-	
-}
-add_action( 'admin_menu', 'fca_qc_featured_plugins_menu' );
-
-function fca_qc_render_featured_plugins(){
-	$content = '<figure class="wp-block-embed is-type-wp-embed is-provider-plugin-directory wp-block-embed-plugin-directory"><div class="wp-block-embed__wrapper">
-https://wordpress.org/plugins/facebook-conversion-pixel/
-</div></figure><figure class="wp-block-embed is-type-wp-embed is-provider-plugin-directory wp-block-embed-plugin-directory"><div class="wp-block-embed__wrapper">
-https://wordpress.org/plugins/easy-pricing-tables/
-</div></figure><figure class="wp-block-embed is-type-wp-embed is-provider-plugin-directory wp-block-embed-plugin-directory"><div class="wp-block-embed__wrapper">
-https://wordpress.org/plugins/landing-page-cat/
-</div></figure><figure class="wp-block-embed is-type-wp-embed is-provider-plugin-directory wp-block-embed-plugin-directory"><div class="wp-block-embed__wrapper">
-https://wordpress.org/plugins/analytics-cat/
-</div></figure>';
-
-	?>
-	<style>
-		.fca-featured-plugins {
-			
-		}
-		
-		.fca-featured-plugins > figure {
-			display: inline-block;
-			margin: 0px 6px;
-			vertical-align: top;
-		}		
-	</style>
-	<div class="wrap">
-		<h2><?php esc_html_e( 'Featured Plugins', 'quiz-cat' ) ?></h2>	
-		<p><?php esc_html_e( 'Problems, Suggestions?', 'quiz-cat' ) ?> 
-		<a href="https://wordpress.org/support/plugin/quiz-cat" target="_blank"><?php esc_html_e( 'Visit the support forum', 'quiz-cat' ) ?></a> | 
-		<a href="https://fatcatapps.com/article-categories/quiz-cat/" target="_blank"><?php esc_html_e( 'Knowledge Base', 'quiz-cat' ) ?></a> | 
-		<a href="https://youtu.be/CQe3VsX_Xag" target="_blank"><?php esc_html_e( 'Watch Demo', 'quiz-cat' ) ?></a> |
-		<a href="http://fatcatapps.com/quizcat/" target="_blank"><?php esc_html_e( 'Get Quiz Cat Premium', 'quiz-cat' ) ?></a>
-		</p>		
-		<div class="fca-featured-plugins">
-			<?php echo apply_filters( 'the_content', $content ) ?>
-		</div>
-	</div>	
-	<?php
-}
-
 function fca_qc_admin_review_notice() {
 	
 	$action = empty( $_GET['fca_qc_review_notice'] ) ? false : sanitize_text_field( $_GET['fca_qc_review_notice'] );

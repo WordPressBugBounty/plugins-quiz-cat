@@ -123,21 +123,22 @@ function fca_qc_do_quiz( $atts ) {
 		$title = empty( $quiz_meta['title'] ) ? '' : $quiz_meta['title'];
 		$desc = empty( $quiz_meta['desc'] ) ? '' : $quiz_meta['desc'];
 		$desc_img_src = empty( $quiz_meta['desc_img_src'] ) ? '' : $quiz_meta['desc_img_src'];
-		
+		$desc_img_alt = empty( $quiz_meta['desc_img_alt'] ) ? '' : $quiz_meta['desc_img_alt'];
+				
 		ob_start(); ?>
 		
 		<?php echo fca_qc_maybe_add_custom_styles( $post_id ) ?>
 		
-		<div class='fca_qc_quiz' id='<?php echo "fca_qc_quiz_$post_id" ?>'>
+		<div class='fca_qc_quiz fca_qc_quiz_container' id='<?php echo "fca_qc_quiz_$post_id" ?>'>
 			<span class='fca_qc_mobile_check'></span>
 			<?php if ( $autostart_quiz === false ) { ?>
 			<p class='fca_qc_quiz_title'><?php echo fca_qc_kses_html( $title ) ?></p>
 			<div class='fca_qc_quiz_description'><?php echo fca_qc_kses_html( do_shortcode( $desc ) )?></div>
-			<img class='fca_qc_quiz_description_img' src='<?php echo esc_attr( $desc_img_src ) ?>'>
+			<img class='fca_qc_quiz_description_img' src='<?php echo esc_url( $desc_img_src ) ?>' alt='<?php echo esc_attr( $desc_img_alt ); ?>'>
 			<button type='button' class='fca_qc_button fca_qc_start_button'><?php echo fca_qc_kses_html( $quiz_text_strings[ 'start_quiz' ] ) ?></button>
 			<?php } ?>
 			
-			<div class='flip-container fca_qc_quiz_div' style='display: none;'>
+			<div class='fca_qc_quiz_div' style='display: none;'>
 
 				<?php if( $timer_mode !== 'off' ){ ?>
 					<div class='fca_qc_timer'>
@@ -146,11 +147,8 @@ function fca_qc_do_quiz( $atts ) {
 						<span class='fca_qc_timer_seconds'></span>
 					</div>
 				<?php } ?>
-				<div class='fca-qc-flipper'>
-					<?php echo fca_qc_do_question_panel( $post_id, $quiz_text_strings ) ?> 
-					<?php echo fca_qc_do_answer_panel( $quiz_text_strings, $post_id ) ?> 
-					
-				</div>
+				<?php echo fca_qc_do_question_panel( $post_id, $quiz_text_strings ) ?> 
+				<?php echo fca_qc_do_answer_panel( $quiz_text_strings, $post_id ) ?>
 			</div>
 			<?php echo fca_qc_do_wait_panel( $post_id, $quiz_text_strings ) ?> 
 			
@@ -184,33 +182,28 @@ function fca_qc_maybe_add_custom_styles( $post_id ) {
 	$quiz_appearance = get_post_meta ( $post_id, 'quiz_cat_appearance', true );
 	
 	// QUIZ
-	$font_color = empty( $quiz_appearance['font_color'] ) ? '#151515' : $quiz_appearance['font_color'];
+	$font_color = empty( $quiz_appearance['font_color'] ) ? '#1c1f2b' : $quiz_appearance['font_color'];
 	$border_thickness = empty( $quiz_appearance['border_thickness'] ) ? '0' : $quiz_appearance['border_thickness'];
-	$border_color = empty( $quiz_appearance['border_color'] ) ? '#151515' : $quiz_appearance['border_color'];
-	$border_radius = empty( $quiz_appearance['border_radius'] ) ? '0px' : $quiz_appearance['border_radius'];
+	$border_color = empty( $quiz_appearance['border_color'] ) ? '#1c1f2b' : $quiz_appearance['border_color'];
+	
 
 	// START BUTTON
-	$button_color = empty( $quiz_appearance['button_color'] ) ? '#58afa2' : $quiz_appearance['button_color'];
-	$button_hover_color = empty( $quiz_appearance['button_hover_color'] ) ? '#3c7d73' : $quiz_appearance['button_hover_color'];
+	$button_color = empty( $quiz_appearance['button_color'] ) ? '#4b3f9e' : $quiz_appearance['button_color'];
+	$button_hover_color = empty( $quiz_appearance['button_hover_color'] ) ? '#2f2470' : $quiz_appearance['button_hover_color'];
 	$button_font_color = empty( $quiz_appearance['button_font_color'] ) ? '#FFFFFF' : $quiz_appearance['button_font_color'];
-	$button_border_color = empty( $quiz_appearance['button_border_color'] ) ? '#3c7d73' : $quiz_appearance['button_border_color'];
-
-	// NEXT BUTTON
-	$next_button_font_color = empty( $quiz_appearance['next_button_font_color'] ) ? '#151515' : $quiz_appearance['next_button_font_color'];
-	$next_button_hover_color = empty( $quiz_appearance['next_button_hover_color'] ) ? '#FFFFFF' : $quiz_appearance['next_button_hover_color'];
-	$next_button_border_color = empty( $quiz_appearance['next_button_border_color'] ) ? '#151515' : $quiz_appearance['next_button_border_color'];
+	$button_border_color = empty( $quiz_appearance['button_border_color'] ) ? '#4b3f9e' : $quiz_appearance['button_border_color'];
 
 	// ANSWER
-	$answer_font_color = empty( $quiz_appearance['answer_font_color'] ) ? '#ffffff' : $quiz_appearance['answer_font_color'];
-	$answer_hover_color = empty( $quiz_appearance['answer_hover_color'] ) ? '#6868ac' : $quiz_appearance['answer_hover_color'];
-	$answer_background_color = empty( $quiz_appearance['answer_background_color'] ) ? '#6d6d6d' : $quiz_appearance['answer_background_color'];
-	$answer_border_thickness = empty( $quiz_appearance['answer_border_thickness'] ) ? '0' : $quiz_appearance['answer_border_thickness'];
-	$answer_border_color = empty( $quiz_appearance['answer_border_color'] ) ? '#6d6d6d' : $quiz_appearance['answer_border_color'];
+	$answer_font_color = empty( $quiz_appearance['answer_font_color'] ) ? '#1c1f2b' : $quiz_appearance['answer_font_color'];
+	$answer_hover_color = empty( $quiz_appearance['answer_hover_color'] ) ? '#efecfb' : $quiz_appearance['answer_hover_color'];
+	$answer_background_color = empty( $quiz_appearance['answer_background_color'] ) ? '#ffffff' : $quiz_appearance['answer_background_color'];
+	$answer_border_thickness = empty( $quiz_appearance['answer_border_thickness'] ) ? '1' : $quiz_appearance['answer_border_thickness'];
+	$answer_border_color = empty( $quiz_appearance['answer_border_color'] ) ? '#e4e6ef' : $quiz_appearance['answer_border_color'];
 
 	// RIGHT/WRONG
-	$rw_font_color = empty( $quiz_appearance['rw_font_color'] ) ? '#151515' : $quiz_appearance['rw_font_color'];
-	$right_background_color = empty( $quiz_appearance['right_background_color'] ) ? '#abdc8c' : $quiz_appearance['right_background_color'];
-	$wrong_background_color = empty( $quiz_appearance['wrong_background_color'] ) ? '#f57484' : $quiz_appearance['wrong_background_color'];
+	$rw_font_color = empty( $quiz_appearance['rw_font_color'] ) ? '#1c1f2b' : $quiz_appearance['rw_font_color'];
+	$right_background_color = empty( $quiz_appearance['right_background_color'] ) ? '#eafbf0' : $quiz_appearance['right_background_color'];
+	$wrong_background_color = empty( $quiz_appearance['wrong_background_color'] ) ? '#fdf0f2' : $quiz_appearance['wrong_background_color'];
 
 	// CUSTOM CSS
 	$custom_css = empty( $quiz_appearance['custom_css'] ) ? '' : $quiz_appearance['custom_css'];
@@ -218,7 +211,12 @@ function fca_qc_maybe_add_custom_styles( $post_id ) {
 	ob_start(); ?>	
 
 		<style>
-			<?php echo "#fca_qc_quiz_$post_id" ?>.fca_qc_quiz p:not( .fca_qc_back_response ):not( #fca_qc_question_right_or_wrong ):not( .fca_qc_question_response_correct_answer ):not( .fca_qc_question_response_response ):not( .fca_qc_question_response_hint ):not( .fca_qc_question_response_item p ),
+			:root {
+				--fca-qc_button_color: <?php echo esc_attr( $button_color ) ?>;
+				--fca-qc_button_color_rgb: <?php echo esc_attr( fca_qc_hex_to_rgb( $button_color ) ) ?>;
+			}
+			
+			<?php echo "#fca_qc_quiz_$post_id" ?>.fca_qc_quiz p:not( .fca_qc_back_response ):not( #fca_qc_question_right_or_wrong ):not( .fca_qc_question_response_correct_answer ):not( .fca_qc_question_response_response ):not( .fca_qc_question_response_hint ):not( .fca_qc_question_response_item p ):not( .fca_qc_social_share p ):not( .fca_qc_score_time ):not( p.fca_qc_score_text ),
 			<?php echo "#fca_qc_quiz_$post_id" ?>.fca_qc_quiz a:not( .fca_qc_share_link ),
 			<?php echo "#fca_qc_quiz_$post_id" ?>.fca_qc_quiz div:not( .correct-answer ):not( .wrong-answer ){
 				color: <?php echo esc_attr( $font_color ) ?>;
@@ -240,22 +238,11 @@ function fca_qc_maybe_add_custom_styles( $post_id ) {
 
 			<?php echo "#fca_qc_quiz_$post_id" ?>.fca_qc_quiz{
 				border: <?php echo $border_color . ' ' . $border_thickness . 'px solid' ?>;
-				border-radius: <?php echo esc_attr( $border_radius ) . 'px' ?>;
-			}
-
-			<?php echo "#fca_qc_quiz_$post_id" ?>.fca_qc_quiz button.fca_qc_next_question {
-				color: <?php echo esc_attr( $next_button_font_color ) ?>;
-				border: <?php echo esc_attr( $next_button_border_color ) . ' 2px solid' ?>;
-				background-color:  transparent;
-			}
-
-			<?php echo "#fca_qc_quiz_$post_id" ?>.fca_qc_quiz button.fca_qc_next_question:hover {
-				background-color: <?php echo esc_attr( $next_button_hover_color ) ?>;
 			}
 
 			<?php echo "#fca_qc_quiz_$post_id" ?>.fca_qc_quiz button.fca_qc_button {
 				background-color: <?php echo esc_attr( $button_color ) ?>;
-				box-shadow: 0 2px 0 0 <?php echo esc_attr( $button_border_color ) ?>;
+				box-shadow: 0 8px 20px -8px <?php echo esc_attr( $button_border_color ) ?>;
 				color: <?php echo esc_attr( $button_font_color ) ?>;
 			}
 
@@ -272,6 +259,7 @@ function fca_qc_maybe_add_custom_styles( $post_id ) {
 			<?php echo "#fca_qc_quiz_$post_id" ?>.fca_qc_quiz div.fca_qc_answer_div.fakehover,
 			<?php echo "#fca_qc_quiz_$post_id" ?>.fca_qc_quiz div.fca_qc_answer_div:active {
 				background-color: <?php echo esc_attr( $answer_hover_color ) ?>;
+				border-color: <?php echo esc_attr( $button_color ) ?>;
 			}
 
 			<?php echo "#fca_qc_quiz_$post_id" ?>.fca_qc_quiz span.fca_qc_answer_span {
@@ -365,7 +353,7 @@ function fca_qc_do_question_panel( $post_id, $quiz_text_strings ) {
 
 			$html .= "<div class='fca_qc_answer_div' data-question='$i'>";
 			$html .= "<img class='fca_qc_quiz_answer_img' src=''>";
-			$html .= "<span class='fca_qc_answer_span'></span></div>";
+			$html .= "<span class='fca_qc_answer_grid'><input class='fca_qc_quiz_radio' type='radio'><span class='fca_qc_answer_span'></span></span></div>";
 
 		}
 		
@@ -385,7 +373,7 @@ function fca_qc_do_answer_panel( $quiz_text_strings, $post_id ) {
 	
 	if ( !empty( $quiz_appearance ) ) {
 
-		$rw_font_color = empty( $quiz_appearance['rw_font_color'] ) ? '#151515' : $quiz_appearance['rw_font_color'];
+		$rw_font_color = empty( $quiz_appearance['rw_font_color'] ) ? '#1c1f2b' : $quiz_appearance['rw_font_color'];
 		$button_hover_color = empty( $quiz_appearance['button_hover_color'] ) ? '#000' : $quiz_appearance['button_hover_color'];
 
 	} else {
@@ -395,6 +383,8 @@ function fca_qc_do_answer_panel( $quiz_text_strings, $post_id ) {
 	}
 
 	$html = "<div class='fca-qc-back' id='fca_qc_back_container'>";
+		$html .= "<div class='result-icon' id='resultIconIncorrect'>✕</div>";
+		$html .= "<div class='result-icon' id='resultIconCorrect'>✓</div>";
 		$html .= "<p style='color: " . $rw_font_color . "' id='fca_qc_question_right_or_wrong'></p>";
 		$html .= "<img class='fca_qc_quiz_question_img' src=''>";
 		$html .= "<span style='color: " . $rw_font_color . "' id='fca_qc_question_back'></span>";
@@ -422,11 +412,11 @@ function fca_qc_do_wait_panel( $post_id, $quiz_text_strings ) {
 function fca_qc_do_score_panel( $post_id, $quiz_text_strings ) {
 	
 	$html = "<div class='fca_qc_score_container' style='display:none;'>";
-		$html .= "<div class='fca_qc_score_text'>" . $quiz_text_strings['you_got'] . " {{SCORE_CORRECT}} " . $quiz_text_strings['out_of'] . " {{SCORE_TOTAL}} </div>";
-		$html .= "<div class='fca_qc_score_time'></div>";
-		$html .= "<div class='fca_qc_score_title'></div>";
+		$html .= "<p class='fca_qc_score_text'>" . $quiz_text_strings['you_got'] . " {{SCORE_CORRECT}} " . $quiz_text_strings['out_of'] . " {{SCORE_TOTAL}} </p>";
+		$html .= "<p class='fca_qc_score_title'></p>";
 		$html .= "<img class='fca_qc_score_img' src=''>";
 		$html .= "<div class='fca_qc_score_desc'></div>";			
+		$html .= "<p class='fca_qc_score_time'></p>";
 	$html .= "</div>";
 	
 	return apply_filters ( 'fca_qc_result_filter', $html, $post_id, $quiz_text_strings );

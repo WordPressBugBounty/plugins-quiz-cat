@@ -341,7 +341,7 @@ img[src=''] {
 }
 .fca_qc_inner_setting_table th {
 	position: relative;
-	top: -3px;
+	top: 4px;
 	width: 128px;
 	vertical-align: top;
 	text-align: left;
@@ -511,6 +511,33 @@ body .ui-tooltip {
 	margin: -4px 0 0 7px;
 }
 
+table#fca_qc_results_webhook_args_values,
+table#fca_qc_results_webhook_headers_values {
+	width: auto;
+}
+
+table#fca_qc_results_webhook_args_values th,
+table#fca_qc_results_webhook_headers_values th {
+	text-align: left;
+}
+
+table#fca_qc_results_webhook_args_values td,
+table#fca_qc_results_webhook_headers_values td {
+	vertical-align: top;
+}
+
+.fca_qc_webhook_delete {
+	color: #ccc;
+	padding: 4px;
+	cursor: pointer;
+	margin: 5px 0 0 -5px;
+}
+
+.fca_qc_add_webhook_args_btn,
+.fca_qc_add_webhook_headers_btn {
+	margin-left: 4px;
+}
+
 button.fca_qc_add_btn.button-secondary {
 	margin: 7px 0 0 0;
 
@@ -586,6 +613,11 @@ div.fca_qc_image_hover_controls {
 	display: none;
 	position: absolute;
 	bottom: 6px;
+}
+
+div.fca_qc_image_hover_controls button {
+	background: rgba( 255, 255, 255, 0.85 ) !important;
+	
 }
 
 div.fca_qc_image_hover_controls:hover {
@@ -677,6 +709,7 @@ img.fca_qc_image:hover + div.fca_qc_image_hover_controls {
 .fca_qc_input_wide,
 .fca-qc-quiz_title,
 #fca-qc-result-title,
+#fca-qc-result-sharing-title,
 #fca-qc-result-url {
 	width: 100% !important;
 	max-width: 300px !important;

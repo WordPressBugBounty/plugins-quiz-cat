@@ -160,6 +160,7 @@ function fca_qc_render_setup_meta_box( $post ) {
 	$quiz_meta = empty( $quiz_meta ) ? array() : $quiz_meta;
 	$quiz_meta['desc'] = empty ( $quiz_meta['desc'] ) ? '' : $quiz_meta['desc'];
 	$quiz_meta['desc_img_src'] = empty ( $quiz_meta['desc_img_src'] ) ? '' : $quiz_meta['desc_img_src'];
+	$quiz_meta['desc_img_alt'] = empty ( $quiz_meta['desc_img_alt'] ) ? '' : $quiz_meta['desc_img_alt'];
 	$quiz_type_get_param = empty( $_GET['quiz_type'] ) ? 'mc' : sanitize_text_field( $_GET['quiz_type'] );
 	$quiz_type = empty( $settings['quiz_type'] ) ? $quiz_type_get_param : $settings['quiz_type'];
 	
@@ -179,7 +180,7 @@ function fca_qc_render_setup_meta_box( $post ) {
 			<th><?php esc_html_e('Description', 'quiz-cat') ?></th>
 			<td>
 				<?php echo fca_qc_add_wysiwyg( $quiz_meta['desc'], 'fca_qc_quiz_description' ) ?>
-				<?php echo fca_qc_add_image_input( $quiz_meta['desc_img_src'], 'quiz_description_image_src', 'fca_qc_quiz_description_image_src' ) ?>
+				<?php echo fca_qc_add_image_input( $quiz_meta['desc_img_src'], 'quiz_description_image_src', 'fca_qc_quiz_description_image_src', $quiz_meta['desc_img_alt'] ) ?>
 			</td>
 		</tr>		
 	</table>
@@ -493,7 +494,7 @@ function fca_qc_render_result_modal() {
 			<tr class='fca_qc_result_row_default' >
 				<th><?php esc_attr_e('Description', 'quiz-cat') ?></th>
 				<td><?php echo fca_qc_add_wysiwyg( '', 'result_description' ) ?>
-					<?php echo fca_qc_add_image_input( '', '', 'fca_qc_quiz_result_image' ) ?>
+					<?php echo fca_qc_add_image_input( '', 'result_image', 'fca_qc_quiz_result_image' ) ?>
 				</td>
 			</tr>
 			<tr class='fca_qc_result_row_minmax' >
@@ -522,6 +523,28 @@ function fca_qc_render_result_modal() {
 						</select>
 					</td>
 				</tr>
+			<?php } ?>
+			<?php if ( function_exists ( 'fca_qc_save_quiz_settings_premium' ) ) { ?>
+					<tr class=''>
+						<th><?php echo esc_html( 'Custom Sharing', 'quiz-cat' ) . fca_qc_tooltip( __('By default, sharing your quiz result on Facebook or other social media will use the above description and image. Turn this on if you want to customize the social sharing display.', 'quiz-cat') ); ?></th>
+						<td>						
+							<div class='onoffswitch'>	
+								<input type='checkbox' class='onoffswitch-checkbox' id='fca_qc_custom_social_result' style='display:none;' name='fca_qc_custom_social_result'></input>		
+								<label class='onoffswitch-label' for='fca_qc_custom_social_result'><span class='onoffswitch-inner'><span class='onoffswitch-switch'></span></span></label>
+							</div>
+						</td>
+						</tr>
+						<tr class='fca_qc_result_row_sharing'>
+							<th><?php esc_html_e( 'Sharing Headline', 'quiz-cat' ) ?></th>
+							<td><?php echo fca_qc_input( 'sharing_title', esc_attr__( "e.g. I got Grumpy Cat - What Cat Are You?", 'quiz-cat' ), '', 'text', 'id="fca-qc-result-sharing-title"' ) ?></td>
+						</tr>
+						<tr class='fca_qc_result_row_sharing'>
+							<th><?php esc_html_e( 'Sharing Description', 'quiz-cat' ) ?></th>
+							<td>
+								<?php echo fca_qc_input( '', 'e.g. I got Grumpy Cat!', '', 'textarea', 'id="fca_qc_result_sharing_description"' ) ?>
+								<?php echo fca_qc_add_image_input( '', 'result_sharing_image', 'fca_qc_quiz_result_sharing_image' ) ?>
+							</td>
+					</tr>
 			<?php } ?>			
 		</table>
 	</div>	
@@ -706,13 +729,14 @@ function fca_qc_save_post( $post_id ) {
 		update_post_meta ( $post_id, 'quiz_cat_meta', array(
 			'desc' => empty ( $_POST['fca_qc_quiz_description'] ) ? '' : fca_qc_kses_html( $_POST['fca_qc_quiz_description'] ),
 			'desc_img_src' => empty ( $_POST['fca_qc_quiz_description_image_src'] ) ? '' : esc_url( $_POST['fca_qc_quiz_description_image_src'] ),
+			'desc_img_alt' => empty ( $_POST['fca_qc_description_image_alt'] ) ? '' : sanitize_text_field( $_POST['fca_qc_description_image_alt'] ),
 		) );
 		
 		//SAVING QUESTIONS
-		update_post_meta( $post_id, 'quiz_cat_questions', fca_qc_kses_html( json_decode( stripslashes_deep( $_POST['fca_qc_questions_json'] ), true ) ) );
+		update_post_meta( $post_id, 'quiz_cat_questions', wp_slash( fca_qc_kses_html( json_decode( wp_unslash( $_POST['fca_qc_questions_json'] ), true ) ) ) );
 		
 		//SAVING RESULTS
-		update_post_meta( $post_id, 'quiz_cat_results', fca_qc_kses_html( json_decode( stripslashes_deep( $_POST['fca_qc_results_json'] ), true ) ) );
+		update_post_meta( $post_id, 'quiz_cat_results', wp_slash( fca_qc_kses_html( json_decode( wp_unslash( $_POST['fca_qc_results_json'] ), true ) ) ) );
 
 		fca_qc_save_quiz_translations( $post_id );
 

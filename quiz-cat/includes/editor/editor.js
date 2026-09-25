@@ -28,7 +28,6 @@ jQuery(document).ready(function($){
 
 	$('.postbox .hndle').css('cursor', 'auto')
 	
-	
 	$('#fca_qc_results_meta_box .postbox-header h2').addClass('fca-qc-color2')
 	$('#fca_qc_questions_meta_box .postbox-header h2').addClass('fca-qc-color3')
 	$('#fca_qc_description_meta_box .postbox-header h2').addClass('fca-qc-color1')
@@ -97,6 +96,9 @@ jQuery(document).ready(function($){
 
 		// Submit results
 		fca_qc_save_result_json()
+		
+		// Submit results
+		fca_qc_save_webhook_json()
 
 	})
 	
@@ -188,7 +190,7 @@ jQuery(document).ready(function($){
 		$( '.nav-tab-active').removeClass( 'nav-tab-active' )
 		$( this ).addClass( 'nav-tab-active' )
 		fca_qc_hide_metaboxes()
-		$( '#fca_qc_results_meta_box, #fca_qc_social_sharing_meta_box, #fca_qc_email_optin_meta_box' ).show()	
+		$( '#fca_qc_results_meta_box, #fca_qc_social_sharing_meta_box, #fca_qc_email_optin_meta_box, #fca_qc_result_webhook_meta_box' ).show()	
 
 	})
 
@@ -456,7 +458,7 @@ function fca_qc_set_default_ids() {
 function fca_qc_hide_metaboxes(){
 	var $ = jQuery
 	
-	$('#fca_qc_quiz_settings_meta_box, #fca_qc_quiz_timer_meta_box, #fca_qc_social_sharing_meta_box, #fca_qc_email_optin_meta_box, #fca_qc_description_meta_box, #fca_qc_weighted_questions_meta_box, #fca_qc_add_weighted_result_meta_box, #fca_qc_questions_meta_box, #fca_qc_results_meta_box, #fca_qc_personality_questions_meta_box, #fca_qc_add_personality_result_meta_box, #fca_qc_quiz_appearance_meta_box, #fca_qc_startbtn_appearance_meta_box, #fca_qc_answers_appearance_meta_box, #fca_qc_rwpanel_appearance_meta_box, #fca_qc_custom_css_meta_box, #fca_qc_translations_meta_box, #fca_qc_question_settings_meta_box').hide()
+	$('#fca_qc_quiz_settings_meta_box, #fca_qc_quiz_timer_meta_box, #fca_qc_social_sharing_meta_box, #fca_qc_email_optin_meta_box, #fca_qc_description_meta_box, #fca_qc_weighted_questions_meta_box, #fca_qc_add_weighted_result_meta_box, #fca_qc_questions_meta_box, #fca_qc_results_meta_box, #fca_qc_personality_questions_meta_box, #fca_qc_add_personality_result_meta_box, #fca_qc_quiz_appearance_meta_box, #fca_qc_startbtn_appearance_meta_box, #fca_qc_answers_appearance_meta_box, #fca_qc_rwpanel_appearance_meta_box, #fca_qc_custom_css_meta_box, #fca_qc_translations_meta_box, #fca_qc_question_settings_meta_box, #fca_qc_result_webhook_meta_box').hide()
 	
 }
 
@@ -565,12 +567,14 @@ function fca_qc_load_question_modal( question, animClass ) {
 	//SET/RESET IMAGE STATE
 	
 	$( '#fca_qc_quiz_question_image').siblings('.fca_qc_image').attr('src', '' )
+	$( '#fca_qc_quiz_question_image').siblings('.fca-qc-alt').val( '' )
 	$( '#fca-qc-question-modal' ).find( '.fca_qc_quiz_image_upload_btn' ).show()
 	
 	
 	if( question.img ){
 		
 		$( '#fca_qc_quiz_question_image').siblings( '.fca_qc_image' ).attr( 'src', question.img )
+		$( '#fca_qc_quiz_question_image').siblings( '.fca-qc-alt' ).val( question.alt || '' )
 		$( '#fca-qc-question-modal' ).find( '.fca_qc_quiz_image_upload_btn' ).hide()
 	}
 	
@@ -644,6 +648,7 @@ function fca_qc_load_question_answers( answers ) {
 		$( '#fca-qc-modal-answers' ).append( div_to_append )
 		if ( answers[i].img ) {
 			$('.fca_qc_answer_input_div').last().find('.fca_qc_image').attr( 'src', answers[i].img )
+			$('.fca_qc_answer_input_div').last().find('.fca-qc-alt').val( answers[i].alt || '' )
 			$('.fca_qc_answer_input_div').last().find('.fca_qc_quiz_image_upload_btn').hide()	
 		}
 	}
@@ -676,6 +681,7 @@ function fca_qc_save_question_answers() {
 			id: answerID,
 			answer: $( this ).find( '.fca_qc_question_texta' ).val(),
 			img: $( this ).find( '.fca_qc_image' ).attr( 'src' ),
+			alt: $( this ).find( '.fca-qc-alt' ).val(),
 			hint: $( '#fca-qc-hint-text-td textarea' ).val(),
 			points:  $( this ).find( '.fca-qc-weighted-question-points' ).val(),
 			results: $( this ).find( '.fca_qc_answer_personality' ).val()
@@ -693,6 +699,7 @@ function fca_qc_save_question_modal() {
 		id: question_id,
 		question: $( '#fca-qc-question-text' ).val(),
 		img: $( '#fca_qc_quiz_question_image').siblings('.fca_qc_image').attr( 'src' ),
+		alt: $( '#fca_qc_quiz_question_image').siblings('.fca-qc-alt').val(),
 		answers: fca_qc_save_question_answers(),
 		
 	}
@@ -711,16 +718,22 @@ function fca_qc_save_result_modal() {
 	var result_id = $( '#fca-qc-result-id' ).val()
 	var $result = $('[data-result_id="' + result_id  + '"]')
 	var wysihtml5Editor = $( '.fca-qc-result_description' ).data("wysihtml5")
+	
 	var resultData = {
 		id: result_id, 
 		title: $( '#fca-qc-result-title' ).val(),
 		desc: wysihtml5Editor ? wysihtml5Editor.getValue() : $( '.fca-qc-result_description' ).val(),
 		img: $( '#fca_qc_quiz_result_image').siblings('.fca_qc_image').attr( 'src' ),
+		alt: $( '#fca_qc_quiz_result_image').siblings('.fca-qc-alt').val(),
 		url: $( '#fca-qc-result-url').val(),
 		min: $('.fca-qc-result_min' ).val(),	
 		max: $('.fca-qc-result_max' ).val(),
 		groups: $('#fca_qc_quiz_result_mailchimp_groups' ).val(),
-		tags: $('#results_tag_hidden_input' ).val()
+		tags: $('#results_tag_hidden_input' ).val(),
+		custom_share: $('#fca_qc_custom_social_result' ).prop('checked'),
+		share_title: $('#fca-qc-result-sharing-title' ).val(),
+		share_desc: $( '#fca_qc_result_sharing_description' ).val(),
+		share_img: $('#fca_qc_quiz_result_sharing_image' ).siblings('.fca_qc_image').attr( 'src' ),
 	}
 	 
 	$result.find( '.fca_qc_result_score_title' ).text( resultData.title )
@@ -774,6 +787,39 @@ function fca_qc_save_result_json() {
 
 }
 
+function fca_qc_save_webhook_json() {
+	
+	var $ = jQuery
+	var args = []
+	$( '#fca_qc_results_webhook_args_td .fca_qc_deletable_item' ).each(function(){
+		var $row  = $(this)
+		var key   = $row.find( '.fca_qc_results_webhook_args_key' ).val()
+		var value = $row.find( '.fca_qc_results_webhook_args_value' ).val()
+		if ( key && value ) {
+			args.push({
+				"key": key,
+				"value": value
+			})			
+		}
+	})
+	
+	var headers = []
+	$( '#fca_qc_results_webhook_headers_td .fca_qc_deletable_item' ).each(function(){
+		var $row  = $(this)
+		var key   = $row.find( '.fca_qc_results_webhook_headers_key' ).val()
+		var value = $row.find( '.fca_qc_results_webhook_headers_value' ).val()
+		if ( key && value ) {
+			headers.push({
+				"key": key,
+				"value": value
+			})			
+		}
+	})
+	
+	$('#fca_qc_results_webhook_args').val( JSON.stringify( args ) )
+	$('#fca_qc_results_webhook_headers').val( JSON.stringify( headers ) )
+}
+
 function fca_qc_load_result_modal( result, animClass ) {
 	if( fcaQcAdminData.debug ) {
 		console.log( result )
@@ -800,10 +846,22 @@ function fca_qc_load_result_modal( result, animClass ) {
 	$( '#fca-qc-result-url').val( result.url )
 		
 	$( '#fca_qc_quiz_result_image').siblings('.fca_qc_image').attr('src', '' )
+	$( '#fca_qc_quiz_result_image').siblings('.fca-qc-alt').val('')
 	$( '#fca-qc-result-modal' ).find( '.fca_qc_quiz_image_upload_btn' ).show()
+	
+	$('#fca_qc_custom_social_result' ).prop('checked', result.custom_share || false).trigger('change'),
+	$('#fca-qc-result-sharing-title' ).val( result.share_title || '' )
+	$( '#fca_qc_result_sharing_description' ).val( result.share_desc || '' )
+	$( '#fca_qc_quiz_result_sharing_image').siblings('.fca_qc_image').attr('src', '' )
+	
 	if( result.img ){		
 		$( '#fca_qc_quiz_result_image').siblings( '.fca_qc_image' ).attr( 'src', result.img )
-		$( '#fca-qc-result-modal' ).find( '.fca_qc_quiz_image_upload_btn' ).hide()
+		$( '#fca_qc_quiz_result_image').siblings( '.fca-qc-alt' ).val( result.alt || '' )
+		$( '.fca-qc-result_image' ).find( '.fca_qc_quiz_image_upload_btn' ).hide()
+	}
+	if( result.share_img ){		
+		$( '#fca_qc_quiz_result_sharing_image').siblings( '.fca_qc_image' ).attr( 'src', result.share_img )
+		$( '.fca_qc_image_input_div_result_sharing_image' ).find( '.fca_qc_quiz_image_upload_btn' ).hide()
 	}
 	
 	if( typeof( fca_qc_load_tags ) !== 'undefined' ) {
@@ -964,11 +1022,15 @@ function fca_qc_attach_image_upload_handlers() {
 				image = image.toJSON()
 				//Do something with attachment.id and/or attachment.url here
 				var image_url = image.sizes[display.size].url
-	
+				var image_alt = image.alt
+				
 				//ASSIGN VALUE
 				if ( image_url ) {
 					$this.siblings( '#fca_qc_quiz_description_image_src' ).val( image_url )
+					$this.siblings( '#fca_qc_custom_share_img' ).val( image_url )
+					$this.siblings( '.fca-qc-description_image_alt' ).val( image_alt )
 					$this.siblings( '.fca_qc_image' ).attr( 'src', image_url )	
+					$this.siblings( '.fca-qc-alt' ).val( image_alt )	
 					//UNHIDE THE REMOVE AND CHANGE IMAGE BUTTONS
 					$this.siblings('.fca_qc_image_hover_controls').find('.fca_qc_quiz_image_change_btn').show()
 					$this.siblings('.fca_qc_image_hover_controls').find('.fca_qc_quiz_image_revert_btn').show()
@@ -982,10 +1044,12 @@ function fca_qc_attach_image_upload_handlers() {
 	//ACTION WHEN CLICKING REMOVE IMAGE
 	$('.fca_qc_quiz_image_revert_btn').off( 'click' )
 	$('.fca_qc_quiz_image_revert_btn').on( 'click', function(e) {
-		
+				
 		$( this.parentNode ).siblings('.fca_qc_image').attr('src', '' )
+		$( this.parentNode ).siblings('.fca-qc-alt').val( '' )
 		$( this.parentNode ).siblings('.fca_qc_quiz_image_upload_btn').show()
 		$( this.parentNode ).siblings('#fca_qc_quiz_description_image_src').val('')
+		$( this.parentNode ).siblings( '#fca_qc_custom_share_img' ).val( '' )
 		$( this ).siblings( '.fca_qc_quiz_image_upload_btn' ).hide()
 		
 	})
